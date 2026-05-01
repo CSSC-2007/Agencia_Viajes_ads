@@ -21,7 +21,6 @@
 /home/armisael/Documents/UDB/C1 2026/ADS/Agencia_Viajes_ADS/obj/Debug/net10.0/scopedcss/Pages/Shared/_Layout.cshtml.rz.scp.css
 /home/armisael/Documents/UDB/C1 2026/ADS/Agencia_Viajes_ADS/obj/Debug/net10.0/scopedcss/bundle/Agencia_Viajes_ADS.styles.css
 /home/armisael/Documents/UDB/C1 2026/ADS/Agencia_Viajes_ADS/obj/Debug/net10.0/scopedcss/projectbundle/Agencia_Viajes_ADS.bundle.scp.css
-/home/armisael/Documents/UDB/C1 2026/ADS/Agencia_Viajes_ADS/obj/Debug/net10.0/compressed/80qiy70mef-{0}-lugek5hnai-lugek5hnai.gz
 /home/armisael/Documents/UDB/C1 2026/ADS/Agencia_Viajes_ADS/obj/Debug/net10.0/compressed/fk2jt3d3v1-{0}-61n19gt1b8-61n19gt1b8.gz
 /home/armisael/Documents/UDB/C1 2026/ADS/Agencia_Viajes_ADS/obj/Debug/net10.0/compressed/w63xzqa7az-{0}-fr7q2aak1r-fr7q2aak1r.gz
 /home/armisael/Documents/UDB/C1 2026/ADS/Agencia_Viajes_ADS/obj/Debug/net10.0/compressed/ibhxajoce3-{0}-bqjiyaj88i-bqjiyaj88i.gz
@@ -83,8 +82,6 @@
 /home/armisael/Documents/UDB/C1 2026/ADS/Agencia_Viajes_ADS/obj/Debug/net10.0/compressed/s9c8iul9oq-{0}-muycvpuwrr-muycvpuwrr.gz
 /home/armisael/Documents/UDB/C1 2026/ADS/Agencia_Viajes_ADS/obj/Debug/net10.0/compressed/yzjcoq7uaq-{0}-87fc7y1x7t-87fc7y1x7t.gz
 /home/armisael/Documents/UDB/C1 2026/ADS/Agencia_Viajes_ADS/obj/Debug/net10.0/compressed/n3je1x4akg-{0}-jfsiqqwiad-jfsiqqwiad.gz
-/home/armisael/Documents/UDB/C1 2026/ADS/Agencia_Viajes_ADS/obj/Debug/net10.0/compressed/6ix0ab1xim-{0}-fr1o16ty1y-fr1o16ty1y.gz
-/home/armisael/Documents/UDB/C1 2026/ADS/Agencia_Viajes_ADS/obj/Debug/net10.0/compressed/1fkqeluabl-{0}-fr1o16ty1y-fr1o16ty1y.gz
 /home/armisael/Documents/UDB/C1 2026/ADS/Agencia_Viajes_ADS/obj/Debug/net10.0/staticwebassets.build.json
 /home/armisael/Documents/UDB/C1 2026/ADS/Agencia_Viajes_ADS/obj/Debug/net10.0/staticwebassets.build.json.cache
 /home/armisael/Documents/UDB/C1 2026/ADS/Agencia_Viajes_ADS/obj/Debug/net10.0/staticwebassets.development.json
@@ -169,3 +166,10 @@
 /home/armisael/Documents/UDB/C1 2026/ADS/Agencia_Viajes_ADS/bin/Debug/net10.0/zh-Hans/Microsoft.CodeAnalysis.Workspaces.resources.dll
 /home/armisael/Documents/UDB/C1 2026/ADS/Agencia_Viajes_ADS/bin/Debug/net10.0/zh-Hant/Microsoft.CodeAnalysis.Workspaces.resources.dll
 /home/armisael/Documents/UDB/C1 2026/ADS/Agencia_Viajes_ADS/obj/Debug/net10.0/Agencia_.7AFD1F5A.Up2Date
+/home/armisael/Documents/UDB/C1 2026/ADS/Agencia_Viajes_ADS/bin/Debug/net10.0/BCrypt.Net-Next.dll
+/home/armisael/Documents/UDB/C1 2026/ADS/Agencia_Viajes_ADS/obj/Debug/net10.0/Agencia_Viajes_ADS.sourcelink.json
+/home/armisael/Documents/UDB/C1 2026/ADS/Agencia_Viajes_ADS/obj/Debug/net10.0/compressed/iek89zgov2-{0}-hsdcx8qe0s-hsdcx8qe0s.gz
+/home/armisael/Documents/UDB/C1 2026/ADS/Agencia_Viajes_ADS/obj/Debug/net10.0/compressed/rpa677xqux-{0}-a5vja8zhtl-a5vja8zhtl.gz
+/home/armisael/Documents/UDB/C1 2026/ADS/Agencia_Viajes_ADS/obj/Debug/net10.0/compressed/80qiy70mef-{0}-1maqa73wrp-1maqa73wrp.gz
+/home/armisael/Documents/UDB/C1 2026/ADS/Agencia_Viajes_ADS/obj/Debug/net10.0/compressed/6ix0ab1xim-{0}-vb1w5yqlxa-vb1w5yqlxa.gz
+/home/armisael/Documents/UDB/C1 2026/ADS/Agencia_Viajes_ADS/obj/Debug/net10.0/compressed/1fkqeluabl-{0}-vb1w5yqlxa-vb1w5yqlxa.gz
