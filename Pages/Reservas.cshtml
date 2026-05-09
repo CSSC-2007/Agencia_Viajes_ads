@@ -1,8 +1,88 @@
-@page
+﻿@page
+@model Agencia_Viajes_ADS.Pages.ReservasModel
 @{
-    ViewData["Title"] = "Reservas";
+    ViewData["Title"] = "reservas";
 }
-<div class="card-custom">
-    <h2 class="fw-bold">Reservas</h2>
-    <p class="text-muted">Esta es la sección de Reservas. Contenido en desarrollo.</p>
-</div>
+
+
+<link rel="stylesheet" href="~/css/reservaciones.css" />
+
+<h1>Reservaciones</h1>
+
+<form method="post">
+
+    <div>
+        <label>Cliente</label>
+
+        <select asp-for="IdCliente">
+
+            @foreach (var cliente in Model.Clientes)
+            {
+                <option value="@cliente.IdCliente">
+                    @cliente.Nombre
+                </option>
+            }
+
+        </select>
+    </div>
+
+    <br />
+
+    <div>
+        <label>Tour</label>
+
+        <select asp-for="IdTour">
+
+            @foreach (var tour in Model.Tours)
+            {
+                <option value="@tour.IdTour">
+                    Tour @tour.IdTour
+                </option>
+            }
+
+        </select>
+    </div>
+
+    <br />
+
+    <div>
+        <label>Monto</label>
+
+        <input asp-for="Monto" />
+    </div>
+
+    <br />
+
+    <div>
+        <label>Método Pago</label>
+
+        <select asp-for="MetodoPago">
+            <option>Efectivo</option>
+            <option>Tarjeta</option>
+            <option>Cuotas</option>
+        </select>
+    </div>
+
+    <br />
+
+    <div>
+        <label>Cuotas</label>
+
+        <input asp-for="Cuotas" />
+    </div>
+
+    <br />
+
+    <div>
+        <label>Factura</label>
+
+        <input asp-for="Factura"/>
+    </div>
+
+    <br />
+
+    <button type="submit">
+        Guardar
+    </button>
+
+</form>
