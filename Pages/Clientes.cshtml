@@ -1,8 +1,179 @@
 @page
+@model Agencia_Viajes_ADS.Pages.ClientesModel
 @{
     ViewData["Title"] = "Clientes";
 }
-<div class="card-custom">
-    <h2 class="fw-bold">Clientes</h2>
-    <p class="text-muted">Esta es la sección de Clientes. Contenido en desarrollo.</p>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold mb-0">Panel de Clientes</h2>
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCrear">
+        + Nuevo Cliente
+    </button>
 </div>
+
+@if (TempData["Exito"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show">
+        @TempData["Exito"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="card shadow-sm">
+    <div class="card-header bg-white py-3">
+        <h5 class="mb-0 fw-semibold">Listado de Clientes</h5>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-4">#</th>
+                        <th>Nombre</th>
+                        <th>Telefono</th>
+                        <th>Direccion</th>
+                        <th>Ocupacion</th>
+                        <th>Estado</th>
+                        <th class="text-end pe-4">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Clientes.Any())
+                    {
+                        <tr>
+                            <td colspan="7" class="text-center text-muted py-4">
+                                No hay clientes registrados aun.
+                            </td>
+                        </tr>
+                    }
+                    @foreach (var c in Model.Clientes)
+                    {
+                        <tr>
+                            <td class="ps-4 text-muted">@c.IdCliente</td>
+                            <td>@c.Nombre</td>
+                            <td>@(c.Telefono != null ? c.Telefono : "-")</td>
+                            <td>@(c.Direccion != null ? c.Direccion : "-")</td>
+                            <td>@(c.Ocupacion != null ? c.Ocupacion : "-")</td>
+                            <td>
+                                @if (c.EstadoCliente)
+                                {
+                                    <span class="badge bg-success">Activo</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">Inactivo</span>
+                                }
+                            </td>
+                            <td class="text-end pe-4">
+                                <button class="btn btn-outline-primary btn-sm me-1"
+                                        onclick="abrirEditar(@c.IdCliente, '@c.Nombre', '@(c.Telefono != null ? c.Telefono : "")', '@(c.Direccion != null ? c.Direccion : "")', '@(c.Ocupacion != null ? c.Ocupacion : "")')">
+                                    Editar
+                                </button>
+                                <form method="post" asp-page-handler="Desactivar" style="display:inline">
+                                    <input type="hidden" name="id" value="@c.IdCliente" />
+                                    @if (c.EstadoCliente)
+                                    {
+                                        <button type="submit" class="btn btn-sm btn-outline-warning">Desactivar</button>
+                                    }
+                                    else
+                                    {
+                                        <button type="submit" class="btn btn-sm btn-outline-success">Activar</button>
+                                    }
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="card-footer bg-white text-muted py-3">
+        <small>Total: @Model.Clientes.Count cliente(s).</small>
+    </div>
+</div>
+
+<!-- Modal Crear -->
+<div class="modal fade" id="modalCrear" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Nuevo Cliente</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="post" asp-page-handler="Crear">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Nombre</label>
+                        <input asp-for="ClienteForm.Nombre" class="form-control" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Telefono</label>
+                        <input asp-for="ClienteForm.Telefono" class="form-control" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Direccion</label>
+                        <input asp-for="ClienteForm.Direccion" class="form-control" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Ocupacion</label>
+                        <input asp-for="ClienteForm.Ocupacion" class="form-control" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Editar -->
+<div class="modal fade" id="modalEditar" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Editar Cliente</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="post" asp-page-handler="Editar">
+                <div class="modal-body">
+                    <input type="hidden" asp-for="ClienteForm.IdCliente" id="editId" />
+                    <div class="mb-3">
+                        <label class="form-label">Nombre</label>
+                        <input asp-for="ClienteForm.Nombre" class="form-control" id="editNombre" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Telefono</label>
+                        <input asp-for="ClienteForm.Telefono" class="form-control" id="editTelefono" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Direccion</label>
+                        <input asp-for="ClienteForm.Direccion" class="form-control" id="editDireccion" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Ocupacion</label>
+                        <input asp-for="ClienteForm.Ocupacion" class="form-control" id="editOcupacion" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Actualizar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function abrirEditar(id, nombre, telefono, direccion, ocupacion) {
+            document.getElementById('editId').value = id;
+            document.getElementById('editNombre').value = nombre;
+            document.getElementById('editTelefono').value = telefono;
+            document.getElementById('editDireccion').value = direccion;
+            document.getElementById('editOcupacion').value = ocupacion;
+            new bootstrap.Modal(document.getElementById('modalEditar')).show();
+        }
+    </script>
+}
