@@ -28,5 +28,11 @@ namespace Agencia_Viajes_ADS.Models
 
         [Column("activo")]
         public bool Activo { get; set; } = true;
+
+        [Column("id_cliente")]
+        public long? IdCliente { get; set; }   // FK hacia Cliente
+
+        [ForeignKey("IdCliente")]
+        public Cliente? Cliente { get; set; }
     }
 }
