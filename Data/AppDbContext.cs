@@ -9,6 +9,9 @@ namespace Agencia_Viajes_ADS.Data
         public DbSet<Usuario> Usuarios { get; set; }
         public DbSet<Rol> Roles { get; set; }
         public DbSet<Cliente> Clientes { get; set; }
+        public DbSet<Pago> Pagos { get; set; }
+        public DbSet<Tour> Tours { get; set; }
+        public DbSet<Inscripcion> Inscripciones { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

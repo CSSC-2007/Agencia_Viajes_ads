@@ -1,8 +1,730 @@
-@page
+﻿@page
+@model Agencia_Viajes_ADS.Pages.FinanzasModel
+
 @{
     ViewData["Title"] = "Finanzas";
 }
-<div class="card-custom">
-    <h2 class="fw-bold">Finanzas</h2>
-    <p class="text-muted">Esta es la sección de Finanzas. Contenido en desarrollo.</p>
+
+<div class="container-fluid">
+
+    <!-- TITULO -->
+    <div class="row mb-4">
+
+        <div class="col-12">
+
+            <h2 class="fw-bold">
+                Panel Financiero
+            </h2>
+
+            <p class="text-muted">
+                Resumen financiero de ExploraMundo.
+            </p>
+
+        </div>
+
+    </div>
+
+    <!-- CARDS -->
+    <div class="row g-4">
+
+        <!-- INGRESOS -->
+        <div class="col-md-3">
+
+            <div class="card-custom finance-card">
+
+                <div class="d-flex justify-content-between align-items-center">
+
+                    <div>
+
+                        <p class="text-muted mb-1">
+                            Ingresos Totales
+                        </p>
+
+                        <h3 class="fw-bold text-success">
+                            <span class="counter"
+                                  data-target="@Model.TotalIngresos">
+
+                                0
+
+                            </span>
+                        </h3>
+
+                    </div>
+
+                    <div class="bg-success bg-opacity-10 p-3 rounded-circle">
+
+                        <i class="bi bi-cash-stack text-success fs-4"></i>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- CUOTAS -->
+        <div class="col-md-3">
+
+            <div class="card-custom finance-card">
+
+                <div class="d-flex justify-content-between align-items-center">
+
+                    <div>
+
+                        <p class="text-muted mb-1">
+                            Pagos en Cuotas
+                        </p>
+
+                        <h3 class="fw-bold" style="color:#f27f3d;">
+                            <span class="counter"
+                                  data-target="@Model.PagosCuotas">
+
+                                0
+
+                            </span>
+                        </h3>
+
+                    </div>
+
+                    <div class="p-3 rounded-circle"
+                         style="background:#fff5f0;">
+
+                        <i class="bi bi-credit-card text-warning fs-4"></i>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- FACTURAS -->
+        <div class="col-md-3">
+
+            <div class="card-custom finance-card">
+
+                <div class="d-flex justify-content-between align-items-center">
+
+                    <div>
+
+                        <p class="text-muted mb-1">
+                            Facturas Generadas
+                        </p>
+
+                        <h3 class="fw-bold text-primary">
+                            <span class="counter"
+                                  data-target="@Model.FacturasGeneradas">
+
+                                0
+
+                            </span>
+                        </h3>
+
+                    </div>
+
+                    <div class="bg-primary bg-opacity-10 p-3 rounded-circle">
+
+                        <i class="bi bi-receipt text-primary fs-4"></i>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- TOURS -->
+        <div class="col-md-3">
+
+            <div class="card-custom finance-card">
+
+                <div class="d-flex justify-content-between align-items-center">
+
+                    <div>
+
+                        <p class="text-muted mb-1">
+                            Tours Vendidos
+                        </p>
+
+                        <h3 class="fw-bold text-danger">
+                            <span class="counter"
+                                  data-target="@Model.ToursVendidos">
+
+                                0
+
+                            </span>
+                        </h3>
+
+                    </div>
+
+                    <div class="bg-danger bg-opacity-10 p-3 rounded-circle">
+
+                        <i class="bi bi-map text-danger fs-4"></i>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- ACCIONES RAPIDAS -->
+    <div class="row mt-5">
+
+        <div class="col-12">
+
+            <div class="card-custom">
+
+                <div class="d-flex justify-content-between align-items-center mb-4">
+
+                    <h5 class="fw-bold">
+                        Acciones Rápidas
+                    </h5>
+
+                </div>
+
+                <div class="row g-3">
+
+                    <div class="col-md-3">
+
+                        <button class="btn btn-warning w-100 p-3 quick-btn"
+                                data-bs-toggle="modal"
+                                data-bs-target="#modalPago">
+
+                            <i class="bi bi-cash-coin fs-4 d-block mb-2"></i>
+
+                            Registrar Pago
+
+                        </button>
+
+                    </div>
+
+                    <div class="col-md-3">
+
+                        <button class="btn btn-outline-primary w-100 p-3 quick-btn">
+
+                            <i class="bi bi-file-earmark-pdf fs-4 d-block mb-2"></i>
+
+                            Generar Reporte
+
+                        </button>
+
+                    </div>
+
+                    <div class="col-md-3">
+
+                        <button class="btn btn-outline-success w-100 p-3 quick-btn">
+
+                            <i class="bi bi-receipt fs-4 d-block mb-2"></i>
+
+                            Crear Factura
+
+                        </button>
+
+                    </div>
+
+                    <div class="col-md-3">
+
+                        <button class="btn btn-outline-danger w-100 p-3 quick-btn">
+
+                            <i class="bi bi-exclamation-circle fs-4 d-block mb-2"></i>
+
+                            Ver Pendientes
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- ALERTAS -->
+    <div class="row mt-4">
+
+        <div class="col-md-6">
+
+            <div class="alert alert-warning border-0 shadow-sm">
+
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+
+                Existen @Model.PagosPendientes pagos pendientes por confirmar.
+
+            </div>
+
+        </div>
+
+        <div class="col-md-6">
+
+            <div class="alert alert-danger border-0 shadow-sm">
+
+                <i class="bi bi-credit-card-2-front-fill me-2"></i>
+
+                Hay @Model.CuotasPendientes pagos realizados en cuotas.
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- GRAFICA -->
+    <div class="row mt-5">
+
+        <div class="col-12">
+
+            <div class="card-custom">
+
+                <div class="d-flex justify-content-between align-items-center mb-4">
+
+                    <h5 class="fw-bold">
+                        Ingresos Mensuales
+                    </h5>
+
+                </div>
+
+                <canvas id="financeChart" height="100"></canvas>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- TABLA -->
+    <div class="row mt-5">
+
+        <div class="col-12">
+
+            <div class="card-custom">
+
+                <div class="d-flex justify-content-between align-items-center mb-4">
+
+                    <h5 class="fw-bold">
+                        Últimos Pagos
+                    </h5>
+
+                    <button class="btn btn-outline-warning btn-sm">
+                        Ver Todo
+                    </button>
+
+                </div>
+
+                <div class="table-responsive">
+
+                    <table class="table table-hover align-middle">
+
+                        <thead class="table-light">
+
+                            <tr>
+                                <th>Factura</th>
+                                <th>Cliente</th>
+                                <th>Método</th>
+                                <th>Cuotas</th>
+                                <th>Monto</th>
+                                <th>Estado</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            @foreach (var item in Model.UltimosPagos)
+                            {
+                                <tr>
+
+                                    <!-- FACTURA -->
+                                    <td>
+                                        @item.Pago.Factura
+                                    </td>
+
+                                    <!-- CLIENTE -->
+                                    <td>
+                                        @item.Cliente.Nombre
+                                    </td>
+
+                                    <!-- METODO -->
+                                    <td>
+
+                                        @if (item.Pago.MetodoPago == "Efectivo")
+                                        {
+                                            <span class="badge bg-success">
+                                                @item.Pago.MetodoPago
+                                            </span>
+                                        }
+                                        else if (item.Pago.MetodoPago == "Tarjeta")
+                                        {
+                                            <span class="badge bg-primary">
+                                                @item.Pago.MetodoPago
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-warning text-dark">
+                                                @item.Pago.MetodoPago
+                                            </span>
+                                        }
+
+                                    </td>
+
+                                    <!-- CUOTAS -->
+                                    <td>
+                                        @item.Pago.CantidadCuotas
+                                    </td>
+
+                                    <!-- MONTO -->
+                                    <td class="fw-bold text-success">
+                                        $@item.Pago.MontoTotal
+                                    </td>
+
+                                    <!-- ESTADO -->
+                                    <td>
+
+                                        @if (item.Estado == "Activa")
+                                        {
+                                            <span class="badge bg-success">
+                                                @item.Estado
+                                            </span>
+                                        }
+                                        else if (item.Estado == "Pendiente")
+                                        {
+                                            <span class="badge bg-warning text-dark">
+                                                @item.Estado
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-danger">
+                                                @item.Estado
+                                            </span>
+                                        }
+
+                                    </td>
+
+                                </tr>
+                            }
+
+                            @if (!Model.UltimosPagos.Any())
+                            {
+                                <tr>
+
+                                    <td colspan="6" class="text-center text-muted py-4">
+
+                                        <i class="bi bi-database-x fs-3 d-block mb-2"></i>
+
+                                        No hay pagos registrados.
+
+                                    </td>
+
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
 </div>
+
+<!-- MODAL REGISTRAR PAGO -->
+
+<div class="modal fade"
+     id="modalPago"
+     tabindex="-1"
+     aria-hidden="true">
+
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+
+        <div class="modal-content border-0 rounded-4">
+
+            <!-- HEADER -->
+            <div class="modal-header border-0">
+
+                <h5 class="fw-bold">
+                    Registrar Nuevo Pago
+                </h5>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal">
+                </button>
+
+            </div>
+
+            <!-- BODY -->
+            <div class="modal-body">
+
+                <form method="post"
+                      asp-page-handler="RegistrarPago">
+
+                    <div class="row g-3">
+
+                        <!-- FACTURA -->
+                        <div class="col-md-6">
+
+                            <label class="form-label">
+                                Factura
+                            </label>
+
+                            <input asp-for="NuevoPago.Factura"
+                                   class="form-control"
+                                   placeholder="FAC-001">
+
+                        </div>
+
+                        <!-- MONTO -->
+                        <div class="col-md-6">
+
+                            <label class="form-label">
+                                Monto
+                            </label>
+
+                            <input asp-for="NuevoPago.MontoTotal"
+                                   class="form-control"
+                                   placeholder="$0.00">
+                        </div>
+
+                        <!-- METODO -->
+                        <div class="col-md-6">
+
+                            <label class="form-label">
+                                Método de Pago
+                            </label>
+
+                            <select class="form-select">
+
+                                <option>
+                                    Efectivo
+                                </option>
+
+                                <option>
+                                    Tarjeta
+                                </option>
+
+                                <option>
+                                    Cuotas
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                        <!-- CUOTAS -->
+                        <div class="col-md-6">
+
+                            <label class="form-label">
+                                Cantidad de Cuotas
+                            </label>
+
+                            <input asp-for="NuevoPago.CantidadCuotas"
+                                   class="form-control"
+                                   value="1">
+                        </div>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+            <!-- FOOTER -->
+            <div class="modal-footer border-0">
+
+                <button class="btn btn-light"
+                        data-bs-dismiss="modal">
+
+                    Cancelar
+
+                </button>
+
+                <button type="submit"
+                        class="btn btn-warning text-white">
+
+                    Guardar Pago
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+<style>
+    .finance-card {
+        transition: 0.3s;
+        cursor: pointer;
+    }
+
+    .finance-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    }
+
+    .quick-btn {
+        transition: 0.3s;
+        border-radius: 15px;
+        font-weight: 600;
+    }
+
+    .quick-btn:hover {
+        transform: translateY(-3px);
+    }
+
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- GRAFICA -->
+<script>
+
+    const ingresos = @Html.Raw(
+            System.Text.Json.JsonSerializer.Serialize(Model.IngresosMensuales)
+        );
+
+    const ctx = document.getElementById('financeChart');
+
+    new Chart(ctx, {
+
+    type: 'bar',
+
+    data: {
+
+    labels: [
+    'Ene',
+    'Feb',
+    'Mar',
+    'Abr',
+    'May',
+    'Jun',
+    'Jul',
+    'Ago',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dic'
+    ],
+
+    datasets: [{
+
+    label: 'Ingresos',
+
+    data: ingresos,
+
+    backgroundColor: [
+
+    '#f27f3d',
+    '#f59e0b',
+    '#fb923c',
+    '#fdba74',
+    '#fed7aa',
+    '#ffedd5',
+
+    '#f27f3d',
+    '#f59e0b',
+    '#fb923c',
+    '#fdba74',
+    '#fed7aa',
+    '#ffedd5'
+
+    ],
+
+    borderRadius: 10
+
+    }]
+
+    },
+
+    options: {
+
+    responsive: true,
+
+    animation: {
+
+    duration: 2000
+
+    },
+
+    plugins: {
+
+    legend: {
+
+    display: false
+
+    }
+
+    },
+
+    scales: {
+
+    y: {
+
+    beginAtZero: true
+
+    }
+
+    }
+
+    }
+
+    });
+
+</script>
+
+<!-- CONTADORES ANIMADOS -->
+<script>
+
+    const counters =
+    document.querySelectorAll('.counter');
+
+    counters.forEach(counter => {
+
+    counter.innerText = '0';
+
+    const updateCounter = () => {
+
+    const target =
+    +counter.getAttribute('data-target');
+
+    const current =
+    +counter.innerText;
+
+    const increment = target / 60;
+
+    if (current < target)
+    {
+    counter.innerText =
+    `${Math.ceil(current + increment)}`;
+
+    setTimeout(updateCounter, 25);
+    }
+    else
+    {
+    counter.innerText = target;
+    }
+
+    };
+
+    updateCounter();
+
+    });
+
+</script>
