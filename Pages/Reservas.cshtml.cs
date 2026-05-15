@@ -14,15 +14,13 @@ namespace Agencia_Viajes_ADS.Pages
             _context = context;
         }
 
-        // =========================
-        // PROPIEDADES FORMULARIO
-        // =========================
+        // form
 
         [BindProperty]
         public long IdTour { get; set; }
 
         [BindProperty]
-        public long IdCliente { get; set; } 
+        public long IdCliente { get; set; }
 
         [BindProperty]
         public decimal Monto { get; set; }
@@ -36,11 +34,9 @@ namespace Agencia_Viajes_ADS.Pages
         [BindProperty]
         public string Factura { get; set; } = "";
 
-        // =========================
         // DATOS PARA VISTA
-        // =========================
 
-        public string NombreCliente { get; set; } = "";
+        public string NombreUsuario { get; set; } = "";
 
         public List<TourVm> Tours { get; set; } = new();
 
@@ -55,23 +51,12 @@ namespace Agencia_Viajes_ADS.Pages
             CargarDatos();
         }
 
-
         // POST
-
         public IActionResult OnPost()
         {
             try
             {
-                var username = User.Identity?.Name;
-
-                if (string.IsNullOrEmpty(username))
-                {
-                    ModelState.AddModelError("", "Usuario no autenticado");
-                    CargarDatos();
-                    return Page();
-                }
-
-                // cliente buscado por ID y usa para validar existencia 
+                // Buscar cliente elegido en el form
                 var cliente = _context.Clientes
                     .FirstOrDefault(c => c.IdCliente == IdCliente);
 
@@ -82,7 +67,7 @@ namespace Agencia_Viajes_ADS.Pages
                     return Page();
                 }
 
-                // TOUR DISPOnible 
+                // Buscar tour
                 var tour = _context.Tours
                     .FirstOrDefault(t => t.IdTour == IdTour);
 
@@ -93,13 +78,14 @@ namespace Agencia_Viajes_ADS.Pages
                     return Page();
                 }
 
-                //Cupos 
+                // Validar cupos
                 if (tour.PlazasOcupadas >= tour.CantidadPlazas)
                 {
                     ModelState.AddModelError("", "No hay plazas disponibles");
                     CargarDatos();
                     return Page();
                 }
+
                 // GUARDAR PAGO
 
                 var pago = new Pago
@@ -112,33 +98,30 @@ namespace Agencia_Viajes_ADS.Pages
                 };
 
                 _context.Pagos.Add(pago);
-                _context.SaveChanges(); 
-
+                _context.SaveChanges();
                 // GUARDAR INSCRIPCION
 
 
                 var inscripcion = new Inscripcion
                 {
-                    IdCliente = IdCliente, 
+                    IdCliente = cliente.IdCliente,
                     IdTour = tour.IdTour,
-                    IdPago = pago.IdPago, 
+                    IdPago = pago.IdPago,
                     FechaInscripcion = DateTime.UtcNow,
                     Estado = "Activa"
                 };
 
                 _context.Inscripciones.Add(inscripcion);
 
-                // ACTUALIZAR PLAZAS
-
-
+                // Actualizar plazas
                 tour.PlazasOcupadas += 1;
 
                 _context.SaveChanges();
 
                 return RedirectToPage();
             }
-            catch(Exception ex)
-{
+            catch (Exception ex)
+            {
                 var mensajeCompleto = ex.InnerException?.Message ?? ex.Message;
                 ModelState.AddModelError("", $"Error: {mensajeCompleto}");
                 CargarDatos();
@@ -148,11 +131,12 @@ namespace Agencia_Viajes_ADS.Pages
 
         // METODO CARGAR DATOS
 
+
         private void CargarDatos()
         {
-            NombreCliente = User.Identity?.Name ?? "";
+            NombreUsuario = User.Identity?.Name ?? "";
 
-            // Tours disponibles
+            // Tours con espacio disponible
             Tours = _context.Tours
                 .Where(t => t.PlazasOcupadas < t.CantidadPlazas)
                 .Select(t => new TourVm
@@ -162,7 +146,7 @@ namespace Agencia_Viajes_ADS.Pages
                 })
                 .ToList();
 
-            // Cargar lista de clientes
+            // Lista de clientes activos
             Clientes = _context.Clientes
                 .Where(c => c.EstadoCliente == true)
                 .Select(c => new ClienteVm
@@ -172,7 +156,7 @@ namespace Agencia_Viajes_ADS.Pages
                 })
                 .ToList();
 
-            // carga de toures 
+            // Todas las reservas con nombre de cliente
             ReservasCliente = (
                 from i in _context.Inscripciones
                 join t in _context.Tours on i.IdTour equals t.IdTour
@@ -182,7 +166,7 @@ namespace Agencia_Viajes_ADS.Pages
                 select new ReservaVm
                 {
                     IdInscripcion = i.IdInscripcion,
-                    NombreCliente = c.Nombre,    
+                    NombreCliente = c.Nombre,
                     NombreTour = t.NombreTour,
                     Estado = i.Estado,
                     FechaInscripcion = i.FechaInscripcion,
@@ -190,6 +174,7 @@ namespace Agencia_Viajes_ADS.Pages
                 }
             ).ToList();
         }
+
 
         // VIEW MODELS
 
@@ -199,7 +184,7 @@ namespace Agencia_Viajes_ADS.Pages
             public string NombreTour { get; set; } = "";
         }
 
-        public class ClienteVm 
+        public class ClienteVm
         {
             public long IdCliente { get; set; }
             public string Nombre { get; set; } = "";

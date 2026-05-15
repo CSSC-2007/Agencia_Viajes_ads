@@ -7,7 +7,7 @@ public class Cliente
 {
     [Key]
     [Column("id_cliente")]
-    public long IdCliente { get; set; }   // Cambiado de int a long
+    public long IdCliente { get; set; }
 
     [Required]
     [Column("nombre")]
@@ -29,7 +29,6 @@ public class Cliente
     [Column("estado_cliente")]
     public bool EstadoCliente { get; set; } = true;
 
-    // Navegación inversa
-    public ICollection<Usuario> Usuarios { get; set; } = new List<Usuario>();
+    // ✅ Sin navegación a Usuario
     public ICollection<Inscripcion> Inscripciones { get; set; } = new List<Inscripcion>();
 }

@@ -18,16 +18,15 @@
             <h1>Reservaciones</h1>
 
             <p class="cliente">
-                Usuario: : <strong>@Model.NombreCliente</strong>
+                Usuario: <strong>@Model.NombreUsuario</strong>
             </p>
 
             <form method="post">
 
                 <div class="campo">
                     <label>Cliente</label>
-
                     <select asp-for="IdCliente" class="form-control">
-                        <option value="">-- Selecciona tu nombre --</option>
+                        <option value="">-- Selecciona cliente --</option>
                         @foreach (var cliente in Model.Clientes)
                         {
                             <option value="@cliente.IdCliente">
@@ -39,28 +38,23 @@
 
                 <div class="campo">
                     <label>Tour</label>
-
                     <select asp-for="IdTour" class="form-control">
-
                         @foreach (var tour in Model.Tours)
                         {
                             <option value="@tour.IdTour">
                                 @tour.NombreTour
                             </option>
                         }
-
                     </select>
                 </div>
 
                 <div class="campo">
                     <label>Monto</label>
-
                     <input asp-for="Monto" />
                 </div>
 
                 <div class="campo">
                     <label>Método Pago</label>
-
                     <select asp-for="MetodoPago">
                         <option>Efectivo</option>
                         <option>Tarjeta</option>
@@ -70,12 +64,11 @@
 
                 <div class="campo">
                     <label>Cuotas</label>
-
                     <input asp-for="Cuotas" />
                 </div>
+
                 <div class="campo">
                     <label>Factura</label>
-
                     <input asp-for="Factura" />
                 </div>
 
@@ -94,7 +87,6 @@
             <h2>Mis Reservas</h2>
 
             <table>
-
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -105,13 +97,12 @@
                         <th>Fecha registro</th>
                     </tr>
                 </thead>
-
                 <tbody>
                     @foreach (var reserva in Model.ReservasCliente)
                     {
                         <tr>
                             <td>@reserva.IdInscripcion</td>
-                            <td>@reserva.NombreCliente</td> 
+                            <td>@reserva.NombreCliente</td>
                             <td>@reserva.NombreTour</td>
                             <td>@reserva.Pago</td>
                             <td>@reserva.Estado</td>
@@ -119,7 +110,6 @@
                         </tr>
                     }
                 </tbody>
-
             </table>
 
         </div>
