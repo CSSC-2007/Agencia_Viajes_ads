@@ -17,10 +17,10 @@ namespace Agencia_Viajes_ADS.Pages
         // form
 
         [BindProperty]
-        public long IdTour { get; set; }
+        public int IdTour { get; set; }
 
         [BindProperty]
-        public long IdCliente { get; set; }
+        public int IdCliente { get; set; }
 
         [BindProperty]
         public decimal Monto { get; set; }
@@ -180,19 +180,19 @@ namespace Agencia_Viajes_ADS.Pages
 
         public class TourVm
         {
-            public long IdTour { get; set; }
+            public int IdTour { get; set; }
             public string NombreTour { get; set; } = "";
         }
 
         public class ClienteVm
         {
-            public long IdCliente { get; set; }
+            public int IdCliente { get; set; }
             public string Nombre { get; set; } = "";
         }
 
         public class ReservaVm
         {
-            public long IdInscripcion { get; set; }
+            public int IdInscripcion { get; set; }
             public string NombreCliente { get; set; } = "";
             public string NombreTour { get; set; } = "";
             public string Estado { get; set; } = "";

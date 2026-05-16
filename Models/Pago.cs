@@ -8,13 +8,13 @@ namespace Agencia_Viajes_ADS.Models
     {
         [Key]
         [Column("id_pago")]
-        public long IdPago { get; set; }
+        public int IdPago { get; set; }
 
         [Column("monto_total")]
         public decimal MontoTotal { get; set; }
 
         [Column("metodo_pago")]
-        public string MetodoPago { get; set; }
+        public string MetodoPago { get; set; } = string.Empty;
 
         [Column("cantidad_cuotas")]
         public int CantidadCuotas { get; set; }
@@ -23,6 +23,6 @@ namespace Agencia_Viajes_ADS.Models
         public DateTime FechaPago { get; set; }
 
         [Column("factura")]
-        public string Factura { get; set; }
+        public string Factura { get; set; } = string.Empty;
     }
 }

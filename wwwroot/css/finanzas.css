@@ -1,0 +1,74 @@
+/* Finanzas Page Styles */
+
+:root {
+    --orange-primary: #f39c12;
+    --orange-light: #fdf2e9;
+    --green-primary: #27ae60;
+    --green-light: #e9f7ef;
+    --red-primary: #e74c3c;
+    --red-light: #fdedec;
+    --text-muted: #6c757d;
+}
+
+.bg-orange-light { background-color: var(--orange-light); }
+.text-orange { color: var(--orange-primary); }
+
+.bg-green-light { background-color: var(--green-light); }
+.text-green { color: var(--green-primary); }
+
+.bg-red-light { background-color: var(--red-light); }
+.text-red { color: var(--red-primary); }
+
+.bg-success-light { background-color: var(--green-light); }
+.bg-warning-light { background-color: var(--orange-light); }
+.bg-danger-light { background-color: var(--red-light); }
+
+.icon-bg {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+}
+
+.fs-xs { font-size: 0.6rem; }
+.text-light-gray { color: #e0e0e0; }
+
+.card {
+    border-radius: 12px;
+    transition: transform 0.2s;
+}
+
+.table thead th {
+    border-top: none;
+    border-bottom: 1px solid #f0f0f0;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.table tbody td {
+    border-bottom: 1px solid #f8f9fa;
+    padding: 1rem 0.5rem;
+}
+
+.badge {
+    padding: 0.5em 1em;
+    font-weight: 600;
+}
+
+.pagination .page-link {
+    border: none;
+    color: var(--text-muted);
+    margin: 0 2px;
+    border-radius: 4px;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #7c4d28;
+    color: white;
+}
+
+.avatar {
+    font-size: 0.9rem;
+}

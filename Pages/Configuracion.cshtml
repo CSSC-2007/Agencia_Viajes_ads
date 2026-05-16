@@ -1,8 +1,207 @@
 @page
+@model Agencia_Viajes_ADS.Pages.ConfiguracionModel
 @{
-    ViewData["Title"] = "Configuracion";
+    ViewData["Title"] = "Configuración";
 }
-<div class="card-custom">
-    <h2 class="fw-bold">Configuracion</h2>
-    <p class="text-muted">Esta es la sección de Configuracion. Contenido en desarrollo.</p>
+
+<div class="container-fluid p-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="h3 mb-1 fw-bold">Configuración del Sistema</h1>
+            <p class="text-muted mb-0">Administra tu perfil, usuarios y parámetros globales de ExploraMundo.</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Sidebar Navigation within Configuration -->
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm p-3 mb-4">
+                <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                    <button class="nav-link active text-start d-flex align-items-center gap-2 mb-2" id="v-pills-profile-tab" data-bs-toggle="pill" data-bs-target="#v-pills-profile" type="button" role="tab">
+                        <i class="bi bi-person-circle"></i> Mi Perfil
+                    </button>
+                    <button class="nav-link text-start d-flex align-items-center gap-2 mb-2" id="v-pills-users-tab" data-bs-toggle="pill" data-bs-target="#v-pills-users" type="button" role="tab">
+                        <i class="bi bi-people-fill"></i> Usuarios del Sistema
+                    </button>
+                    <button class="nav-link text-start d-flex align-items-center gap-2 mb-2" id="v-pills-catalogs-tab" data-bs-toggle="pill" data-bs-target="#v-pills-catalogs" type="button" role="tab">
+                        <i class="bi bi-list-stars"></i> Catálogos (Escalas)
+                    </button>
+                    <button class="nav-link text-start d-flex align-items-center gap-2 mb-2" id="v-pills-agency-tab" data-bs-toggle="pill" data-bs-target="#v-pills-agency" type="button" role="tab">
+                        <i class="bi bi-building"></i> Información de Agencia
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab Content -->
+        <div class="col-md-9">
+            <div class="tab-content" id="v-pills-tabContent">
+                
+                <!-- Profile Tab -->
+                <div class="tab-pane fade show active" id="v-pills-profile" role="tabpanel">
+                    <div class="card border-0 shadow-sm p-4">
+                        <h5 class="fw-bold mb-4">Información de Perfil</h5>
+                        <div class="row align-items-center mb-4">
+                            <div class="col-auto">
+                                <div class="bg-light text-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 80px; height: 80px; font-size: 2rem;">
+                                    @Model.CurrentUsername.Substring(0, 1).ToUpper()
+                                </div>
+                            </div>
+                            <div class="col">
+                                <h4 class="mb-0 fw-bold">@Model.CurrentUsername</h4>
+                                <span class="badge bg-primary-light text-primary rounded-pill">@Model.CurrentRole</span>
+                            </div>
+                        </div>
+                        <hr>
+                        <form class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label small text-muted">Nombre de Usuario</label>
+                                <input type="text" class="form-control" value="@Model.CurrentUsername" readonly>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small text-muted">Rol Asignado</label>
+                                <input type="text" class="form-control" value="@Model.CurrentRole" readonly>
+                            </div>
+                            <div class="col-12 mt-4">
+                                <button type="button" class="btn btn-primary" style="background-color: #7c4d28; border-color: #7c4d28;">Cambiar Contraseña</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Users Tab -->
+                <div class="tab-pane fade" id="v-pills-users" role="tabpanel">
+                    <div class="card border-0 shadow-sm p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h5 class="fw-bold mb-0">Personal del Sistema</h5>
+                            <button class="btn btn-sm btn-outline-primary">Nuevo Usuario</button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table align-middle">
+                                <thead class="text-muted small">
+                                    <tr>
+                                        <th>USUARIO</th>
+                                        <th>ROL</th>
+                                        <th>ESTADO</th>
+                                        <th>ACCIÓN</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var user in Model.Usuarios)
+                                    {
+                                        <tr>
+                                            <td class="fw-bold">@user.Username</td>
+                                            <td>@user.Rol</td>
+                                            <td>
+                                                @if (user.Activo)
+                                                {
+                                                    <span class="badge bg-success-light text-success rounded-pill">Activo</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-danger-light text-danger rounded-pill">Inactivo</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-link btn-sm text-muted"><i class="bi bi-pencil"></i></button>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Catalogs Tab -->
+                <div class="tab-pane fade" id="v-pills-catalogs" role="tabpanel">
+                    <div class="card border-0 shadow-sm p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h5 class="fw-bold mb-0">Escalas Disponibles</h5>
+                            <button class="btn btn-sm btn-outline-primary">Nueva Escala</button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table align-middle">
+                                <thead class="text-muted small">
+                                    <tr>
+                                        <th>ORDEN</th>
+                                        <th>LUGAR</th>
+                                        <th>ACCIONES</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var escala in Model.Escalas)
+                                    {
+                                        <tr>
+                                            <td class="fw-bold">@escala.Orden</td>
+                                            <td>@escala.LugarEscala</td>
+                                            <td>
+                                                <button class="btn btn-link btn-sm text-muted"><i class="bi bi-pencil"></i></button>
+                                                <button class="btn btn-link btn-sm text-danger"><i class="bi bi-trash"></i></button>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Agency Tab -->
+                <div class="tab-pane fade" id="v-pills-agency" role="tabpanel">
+                    <div class="card border-0 shadow-sm p-4">
+                        <h5 class="fw-bold mb-4">Información Corporativa</h5>
+                        <form class="row g-3">
+                            <div class="col-md-12">
+                                <label class="form-label small text-muted">Nombre de la Agencia</label>
+                                <input type="text" class="form-control" value="ExploraMundo Travel Agency">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small text-muted">NIT / Registro Fiscal</label>
+                                <input type="text" class="form-control" value="0614-123456-101-0">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small text-muted">Teléfono de Contacto</label>
+                                <input type="text" class="form-control" value="+503 2222-0000">
+                            </div>
+                            <div class="col-md-12">
+                                <label class="form-label small text-muted">Dirección Central</label>
+                                <textarea class="form-control" rows="2">San Salvador, El Salvador, C.A.</textarea>
+                            </div>
+                            <div class="col-12 mt-4 text-end">
+                                <button type="button" class="btn btn-primary" style="background-color: #7c4d28; border-color: #7c4d28;">Guardar Cambios</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
 </div>
+
+<style>
+    .bg-primary-light { background-color: #e7f1ff; }
+    .bg-success-light { background-color: #e9f7ef; }
+    .bg-danger-light { background-color: #fdedec; }
+    
+    .nav-pills .nav-link {
+        color: #495057;
+        font-weight: 500;
+        border-radius: 8px;
+        padding: 0.8rem 1rem;
+    }
+    
+    .nav-pills .nav-link.active {
+        background-color: #7c4d28;
+        color: white;
+    }
+
+    .nav-pills .nav-link:hover:not(.active) {
+        background-color: #f8f9fa;
+    }
+
+    .card {
+        border-radius: 12px;
+    }
+</style>
