@@ -1,0 +1,84 @@
+﻿body {
+    margin: 0;
+    font-family: Arial;
+    background: #f4f4f4;
+}
+
+.reservas-container {
+    min-height: 100vh;
+    background-image: url('/css/Image/Fondo_reservas.JPG');
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    padding: 40px;
+}
+
+.overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+}
+
+.contenido {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    gap: 30px;
+    align-items: flex-start;
+}
+
+.reserva-card,
+.tabla-card {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    width: 50%;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+}
+
+h1, h2 {
+    margin-bottom: 20px;
+}
+
+.campo {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+    .campo input,
+    .campo select {
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+    }
+
+.btn-guardar {
+    background: #f27f3d;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 10px;
+    width: 100%;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout : auto;
+}
+
+    table th {
+        background: #f27f3d;
+        color: white;
+        padding: 14px;
+        text-align justify;
+
+    }
+
+    table td {
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+        color: #222;
+        vertical-align: middle
+    }

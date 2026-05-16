@@ -1,5 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
 using Agencia_Viajes_ADS.Models;
+using Agencia_Viajes_ADS.Pages;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 
 namespace Agencia_Viajes_ADS.Data
 {
@@ -12,7 +14,10 @@ namespace Agencia_Viajes_ADS.Data
         public DbSet<Rol> Roles { get; set; }
         public DbSet<Cliente> Clientes { get; set; }
         public DbSet<Tour> Tours { get; set; }
+        public DbSet<Pago> Pagos { get; set; }
+        public DbSet<Inscripcion> Inscripciones { get; set; }
         public DbSet<Escala> Escalas { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
