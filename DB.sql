@@ -38,28 +38,31 @@ CREATE TABLE CLIENTE (
     estado_cliente BIT DEFAULT 1 -- Para bajas lógicas
 );
 
+CREATE TABLE ESCALA (
+    id_escala INT PRIMARY KEY IDENTITY(1,1),
+    lugar_escala VARCHAR(100) NOT NULL,
+    orden INT NOT NULL
+);
+
 CREATE TABLE TOUR (
     id_tour INT PRIMARY KEY,
+    id_escala INT NOT NULL,
+    nombre_tour Varchar(100) NOT NULL,
+    descripcion_tour VARCHAR(255),
     fecha_salida DATETIME NOT NULL,
     fecha_llegada DATETIME NOT NULL,
     cantidad_plazas INT NOT NULL,
     plazas_ocupadas INT DEFAULT 0,
     CHECK (fecha_llegada > fecha_salida),
-    CHECK (plazas_ocupadas <= cantidad_plazas)
+    CHECK (plazas_ocupadas <= cantidad_plazas),
+    FOREIGN KEY (id_escala) REFERENCES ESCALA(id_escala)
 );
 
 -- =============================================
 -- 3. TABLAS DE DETALLE Y TRANSACCIONES
 -- =============================================
 
-CREATE TABLE ESCALA (
-    id_escala INT PRIMARY KEY IDENTITY(1,1),
-    id_tour INT NOT NULL,
-    lugar VARCHAR(100) NOT NULL,
-    descripcion VARCHAR(255),
-    orden INT NOT NULL,
-    FOREIGN KEY (id_tour) REFERENCES TOUR(id_tour)
-);
+
 
 -- Tabla de Pagos Unificada: Resuelve el requerimiento de "Cuotas" del Gerente
 CREATE TABLE PAGO (
