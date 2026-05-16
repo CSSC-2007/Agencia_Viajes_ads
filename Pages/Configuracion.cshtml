@@ -5,6 +5,14 @@
 }
 
 <div class="container-fluid p-4">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i> @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
     <div class="row mb-4">
         <div class="col">
             <h1 class="h3 mb-1 fw-bold">Configuración del Sistema</h1>
@@ -21,13 +29,13 @@
                         <i class="bi bi-person-circle"></i> Mi Perfil
                     </button>
                     <button class="nav-link text-start d-flex align-items-center gap-2 mb-2" id="v-pills-users-tab" data-bs-toggle="pill" data-bs-target="#v-pills-users" type="button" role="tab">
-                        <i class="bi bi-people-fill"></i> Usuarios del Sistema
+                        <i class="bi bi-people-fill"></i> Personal y Roles
                     </button>
                     <button class="nav-link text-start d-flex align-items-center gap-2 mb-2" id="v-pills-catalogs-tab" data-bs-toggle="pill" data-bs-target="#v-pills-catalogs" type="button" role="tab">
-                        <i class="bi bi-list-stars"></i> Catálogos (Escalas)
+                        <i class="bi bi-list-stars"></i> Catálogos (Escalas y Pagos)
                     </button>
                     <button class="nav-link text-start d-flex align-items-center gap-2 mb-2" id="v-pills-agency-tab" data-bs-toggle="pill" data-bs-target="#v-pills-agency" type="button" role="tab">
-                        <i class="bi bi-building"></i> Información de Agencia
+                        <i class="bi bi-gear-fill"></i> Parámetros de Negocio
                     </button>
                 </div>
             </div>
@@ -63,7 +71,7 @@
                                 <input type="text" class="form-control" value="@Model.CurrentRole" readonly>
                             </div>
                             <div class="col-12 mt-4">
-                                <button type="button" class="btn btn-primary" style="background-color: #7c4d28; border-color: #7c4d28;">Cambiar Contraseña</button>
+                                <button type="button" class="btn btn-primary" style="background-color: #7c4d28; border-color: #7c4d28;" data-bs-toggle="modal" data-bs-target="#changePasswordModal">Cambiar Contraseña</button>
                             </div>
                         </form>
                     </div>
@@ -73,8 +81,10 @@
                 <div class="tab-pane fade" id="v-pills-users" role="tabpanel">
                     <div class="card border-0 shadow-sm p-4">
                         <div class="d-flex justify-content-between align-items-center mb-4">
-                            <h5 class="fw-bold mb-0">Personal del Sistema</h5>
-                            <button class="btn btn-sm btn-outline-primary">Nuevo Usuario</button>
+                            <div>
+                                <h5 class="fw-bold mb-0">Gestión de Personal</h5>
+                                <p class="text-muted small mb-0">Define quiénes operan el sistema y sus responsabilidades (Atención, Turismo, Gerencia).</p>
+                            </div>
                         </div>
                         <div class="table-responsive">
                             <table class="table align-middle">
@@ -103,7 +113,23 @@
                                                 }
                                             </td>
                                             <td>
-                                                <button class="btn btn-link btn-sm text-muted"><i class="bi bi-pencil"></i></button>
+                                                @if (Model.CurrentRole == "Gerente")
+                                                {
+                                                    <button class="btn btn-link btn-sm text-primary edit-user-btn" 
+                                                            data-id="@user.IdUsuario" 
+                                                            data-username="@user.Username" 
+                                                            data-rol-id="@user.IdRol" 
+                                                            data-activo="@user.Activo.ToString().ToLower()"
+                                                            title="Editar Usuario">
+                                                        <i class="bi bi-pencil-square"></i>
+                                                    </button>
+                                                }
+                                                else
+                                                {
+                                                    <button class="btn btn-link btn-sm text-muted" disabled title="Solo el Gerente puede editar">
+                                                        <i class="bi bi-pencil"></i>
+                                                    </button>
+                                                }
                                             </td>
                                         </tr>
                                     }
@@ -115,10 +141,10 @@
 
                 <!-- Catalogs Tab -->
                 <div class="tab-pane fade" id="v-pills-catalogs" role="tabpanel">
-                    <div class="card border-0 shadow-sm p-4">
+                    <div class="card border-0 shadow-sm p-4 mb-4">
                         <div class="d-flex justify-content-between align-items-center mb-4">
-                            <h5 class="fw-bold mb-0">Escalas Disponibles</h5>
-                            <button class="btn btn-sm btn-outline-primary">Nueva Escala</button>
+                            <h5 class="fw-bold mb-0">Escalas para Tours</h5>
+                            <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#escalaModal" onclick="prepareAddEscala()">Nueva Escala</button>
                         </div>
                         <div class="table-responsive">
                             <table class="table align-middle">
@@ -136,8 +162,19 @@
                                             <td class="fw-bold">@escala.Orden</td>
                                             <td>@escala.LugarEscala</td>
                                             <td>
-                                                <button class="btn btn-link btn-sm text-muted"><i class="bi bi-pencil"></i></button>
-                                                <button class="btn btn-link btn-sm text-danger"><i class="bi bi-trash"></i></button>
+                                                <button class="btn btn-link btn-sm text-primary edit-escala-btn" 
+                                                        data-id="@escala.IdEscala" 
+                                                        data-lugar="@escala.LugarEscala" 
+                                                        data-orden="@escala.Orden"
+                                                        title="Editar Escala">
+                                                    <i class="bi bi-pencil"></i>
+                                                </button>
+                                                <button class="btn btn-link btn-sm text-danger delete-escala-btn" 
+                                                        data-id="@escala.IdEscala" 
+                                                        data-lugar="@escala.LugarEscala"
+                                                        title="Eliminar Escala">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
                                             </td>
                                         </tr>
                                     }
@@ -145,31 +182,62 @@
                             </table>
                         </div>
                     </div>
+
+                    <div class="card border-0 shadow-sm p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h5 class="fw-bold mb-0">Métodos de Pago Aceptados</h5>
+                            <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#metodoModal">Nuevo Método</button>
+                        </div>
+                        <div class="row row-cols-1 row-cols-md-2 g-3">
+                            @foreach (var metodo in Model.MetodosPago)
+                            {
+                                <div class="col">
+                                    <div class="d-flex align-items-center p-3 border rounded shadow-sm">
+                                        <i class="bi bi-credit-card-2-back me-3 text-primary fs-4"></i>
+                                        <div class="flex-grow-1">
+                                            <h6 class="mb-0 fw-bold">@metodo.NombreMetodo</h6>
+                                        </div>
+                                        <button class="btn btn-sm text-danger delete-metodo-btn" data-id="@metodo.IdMetodo" data-name="@metodo.NombreMetodo"><i class="bi bi-x-circle"></i></button>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Agency Tab -->
                 <div class="tab-pane fade" id="v-pills-agency" role="tabpanel">
                     <div class="card border-0 shadow-sm p-4">
-                        <h5 class="fw-bold mb-4">Información Corporativa</h5>
+                        <h5 class="fw-bold mb-4">Configuración Estratégica y Corporativa</h5>
                         <form class="row g-3">
                             <div class="col-md-12">
                                 <label class="form-label small text-muted">Nombre de la Agencia</label>
                                 <input type="text" class="form-control" value="ExploraMundo Travel Agency">
                             </div>
-                            <div class="col-md-6">
+                            
+                            <div class="col-12 mt-4">
+                                <h6 class="fw-bold text-primary mb-3"><i class="bi bi-bar-chart-fill me-2"></i>Parámetros para Reportes Gerenciales</h6>
+                                <div class="row g-3 p-3 bg-light rounded">
+                                    <div class="col-md-8">
+                                        <label class="form-label mb-0">Cantidad mínima de viajes para reporte de "Clientes Frecuentes"</label>
+                                        <p class="text-muted small mb-2">Este valor define el umbral para las consultas del Gerente sobre clientes con múltiples viajes.</p>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <input type="number" class="form-control" value="@Model.MinViajesReporte">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 mt-4">
                                 <label class="form-label small text-muted">NIT / Registro Fiscal</label>
                                 <input type="text" class="form-control" value="0614-123456-101-0">
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-6 mt-4">
                                 <label class="form-label small text-muted">Teléfono de Contacto</label>
                                 <input type="text" class="form-control" value="+503 2222-0000">
                             </div>
-                            <div class="col-md-12">
-                                <label class="form-label small text-muted">Dirección Central</label>
-                                <textarea class="form-control" rows="2">San Salvador, El Salvador, C.A.</textarea>
-                            </div>
                             <div class="col-12 mt-4 text-end">
-                                <button type="button" class="btn btn-primary" style="background-color: #7c4d28; border-color: #7c4d28;">Guardar Cambios</button>
+                                <button type="button" class="btn btn-primary" style="background-color: #7c4d28; border-color: #7c4d28;">Guardar Configuración</button>
                             </div>
                         </form>
                     </div>
@@ -179,6 +247,166 @@
         </div>
     </div>
 </div>
+
+<!-- Change Password Modal -->
+<div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold" id="changePasswordModalLabel">Cambiar Contraseña</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="changePasswordForm">
+                @Html.AntiForgeryToken()
+                <div class="modal-body">
+                    <div id="passwordErrorAlert" class="alert alert-danger d-none small mb-3"></div>
+                    <div class="mb-3">
+                        <label asp-for="PasswordInput.CurrentPassword" class="form-label small text-muted"></label>
+                        <input asp-for="PasswordInput.CurrentPassword" class="form-control" placeholder="Ingrese contraseña actual" />
+                        <span asp-validation-for="PasswordInput.CurrentPassword" class="text-danger small"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="PasswordInput.NewPassword" class="form-label small text-muted"></label>
+                        <input asp-for="PasswordInput.NewPassword" class="form-control" placeholder="Nueva contraseña (mín. 6 caracteres)" />
+                        <span asp-validation-for="PasswordInput.NewPassword" class="text-danger small"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="PasswordInput.ConfirmPassword" class="form-label small text-muted"></label>
+                        <input asp-for="PasswordInput.ConfirmPassword" class="form-control" placeholder="Confirme nueva contraseña" />
+                        <span asp-validation-for="PasswordInput.ConfirmPassword" class="text-danger small"></span>
+                    </div>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" style="background-color: #7c4d28; border-color: #7c4d28;">Actualizar Contraseña</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Escala Add/Edit Modal -->
+<div class="modal fade" id="escalaModal" tabindex="-1" aria-labelledby="escalaModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold" id="escalaModalLabel">Nueva Escala</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="escalaForm">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="EscalaInput.IdEscala" id="escalaId" />
+                <div class="modal-body">
+                    <div id="escalaErrorAlert" class="alert alert-danger d-none small mb-3"></div>
+                    <div class="mb-3">
+                        <label asp-for="EscalaInput.LugarEscala" class="form-label small text-muted">Lugar de la Escala</label>
+                        <input asp-for="EscalaInput.LugarEscala" class="form-control" id="escalaLugar" placeholder="Ej: Madrid, España" />
+                        <span asp-validation-for="EscalaInput.LugarEscala" class="text-danger small"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="EscalaInput.Orden" class="form-label small text-muted">Orden de la Escala</label>
+                        <input asp-for="EscalaInput.Orden" type="number" class="form-control" id="escalaOrden" placeholder="Ej: 1" />
+                        <span asp-validation-for="EscalaInput.Orden" class="text-danger small"></span>
+                    </div>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" id="escalaSubmitBtn" style="background-color: #7c4d28; border-color: #7c4d28;">Guardar Escala</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteEscalaModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <h5 class="modal-title fw-bold">¿Eliminar Escala?</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body py-0">
+                <p class="text-muted small">¿Estás seguro que deseas eliminar la escala <span id="deleteEscalaName" class="fw-bold"></span>? Esta acción no se puede deshacer.</p>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-light btn-sm" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger btn-sm" id="confirmDeleteEscalaBtn">Eliminar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Metodo Pago Modal -->
+<div class="modal fade" id="metodoModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold">Nuevo Método de Pago</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="metodoForm">
+                @Html.AntiForgeryToken()
+                <div class="modal-body">
+                    <div id="metodoErrorAlert" class="alert alert-danger d-none small mb-3"></div>
+                    <div class="mb-3">
+                        <label asp-for="MetodoInput.NombreMetodo" class="form-label small text-muted">Nombre del Método</label>
+                        <input asp-for="MetodoInput.NombreMetodo" class="form-control" placeholder="Ej: PayPal" />
+                        <span asp-validation-for="MetodoInput.NombreMetodo" class="text-danger small"></span>
+                    </div>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-light btn-sm" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary btn-sm" style="background-color: #7c4d28; border-color: #7c4d28;">Agregar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit User Modal (Only for Gerente) -->
+@if (Model.CurrentRole == "Gerente")
+{
+    <div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold" id="editUserModalLabel">Editar Usuario: <span id="editUserUsername"></span></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="editUserForm">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" asp-for="UpdateInput.IdUsuario" id="editUserId" />
+                    <div class="modal-body">
+                        <div id="editUserErrorAlert" class="alert alert-danger d-none small mb-3"></div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label small text-muted">Rol del Usuario</label>
+                            <select asp-for="UpdateInput.IdRol" id="editUserRolId" class="form-select">
+                                @foreach (var rol in Model.Roles)
+                                {
+                                    <option value="@rol.IdRol">@rol.NombreRol</option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small text-muted">Estado de la Cuenta</label>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" asp-for="UpdateInput.Activo" id="editUserActivo">
+                                <label class="form-check-label" for="editUserActivo">Usuario Activo</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary" style="background-color: #7c4d28; border-color: #7c4d28;">Guardar Cambios</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+}
 
 <style>
     .bg-primary-light { background-color: #e7f1ff; }
@@ -205,3 +433,231 @@
         border-radius: 12px;
     }
 </style>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        $(document).ready(function () {
+            $('#changePasswordForm').on('submit', function (e) {
+                e.preventDefault();
+                
+                if (!$(this).valid()) return;
+
+                const $btn = $(this).find('button[type="submit"]');
+                const $errorAlert = $('#passwordErrorAlert');
+                
+                $btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span>Actualizando...');
+                $errorAlert.addClass('d-none');
+
+                $.ajax({
+                    url: '?handler=ChangePassword',
+                    method: 'POST',
+                    data: $(this).serialize(),
+                    success: function (response) {
+                        if (response.success) {
+                            // Close modal and show main success message
+                            bootstrap.Modal.getInstance(document.getElementById('changePasswordModal')).hide();
+                            
+                            // Create success alert dynamically if it doesn't exist
+                            let $mainAlert = $('.alert-success');
+                            if ($mainAlert.length === 0) {
+                                $('.container-fluid').first().prepend(`
+                                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                        <i class="bi bi-check-circle-fill me-2"></i> ${response.message}
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    </div>
+                                `);
+                            } else {
+                                $mainAlert.html(`<i class="bi bi-check-circle-fill me-2"></i> ${response.message}<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`).removeClass('d-none');
+                            }
+                            
+                            $('#changePasswordForm')[0].reset();
+                        } else {
+                            $errorAlert.text(response.message).removeClass('d-none');
+                        }
+                    },
+                    error: function () {
+                        $errorAlert.text('Ocurrió un error inesperado. Intente de nuevo.').removeClass('d-none');
+                    },
+                    complete: function () {
+                        $btn.prop('disabled', false).text('Actualizar Contraseña');
+                    }
+                });
+            });
+
+            // Reset error alert when modal opens
+            $('#changePasswordModal').on('show.bs.modal', function () {
+                $('#passwordErrorAlert').addClass('d-none');
+                $('#changePasswordForm')[0].reset();
+            });
+
+            // Edit User Logic
+            $('.edit-user-btn').on('click', function() {
+                const id = $(this).data('id');
+                const username = $(this).data('username');
+                const rolId = $(this).data('rol-id');
+                const activo = $(this).data('activo');
+
+                $('#editUserId').val(id);
+                $('#editUserUsername').text(username);
+                $('#editUserRolId').val(rolId);
+                $('#editUserActivo').prop('checked', activo);
+
+                const editModal = new bootstrap.Modal(document.getElementById('editUserModal'));
+                editModal.show();
+            });
+
+            $('#editUserForm').on('submit', function(e) {
+                e.preventDefault();
+                const $btn = $(this).find('button[type="submit"]');
+                const $errorAlert = $('#editUserErrorAlert');
+
+                $btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span>Guardando...');
+                $errorAlert.addClass('d-none');
+
+                $.ajax({
+                    url: '?handler=UpdateUser',
+                    method: 'POST',
+                    data: $(this).serialize(),
+                    success: function(response) {
+                        if (response.success) {
+                            location.reload(); // Reload to show updated table
+                        } else {
+                            $errorAlert.text(response.message).removeClass('d-none');
+                            $btn.prop('disabled', false).text('Guardar Cambios');
+                        }
+                    },
+                    error: function() {
+                        $errorAlert.text('Error al comunicar con el servidor.').removeClass('d-none');
+                        $btn.prop('disabled', false).text('Guardar Cambios');
+                    }
+                });
+            });
+
+            // Escalas CRUD Logic
+            window.prepareAddEscala = function() {
+                $('#escalaModalLabel').text('Nueva Escala');
+                $('#escalaForm')[0].reset();
+                $('#escalaId').val(0);
+                $('#escalaErrorAlert').addClass('d-none');
+            };
+
+            $('.edit-escala-btn').on('click', function() {
+                const id = $(this).data('id');
+                const lugar = $(this).data('lugar');
+                const orden = $(this).data('orden');
+
+                $('#escalaModalLabel').text('Editar Escala');
+                $('#escalaId').val(id);
+                $('#escalaLugar').val(lugar);
+                $('#escalaOrden').val(orden);
+                $('#escalaErrorAlert').addClass('d-none');
+
+                const escalaModal = new bootstrap.Modal(document.getElementById('escalaModal'));
+                escalaModal.show();
+            });
+
+            $('#escalaForm').on('submit', function(e) {
+                e.preventDefault();
+                if (!$(this).valid()) return;
+
+                const id = $('#escalaId').val();
+                const handler = id == 0 ? 'AddEscala' : 'EditEscala';
+                const $btn = $('#escalaSubmitBtn');
+                
+                $btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span>Guardando...');
+
+                $.ajax({
+                    url: `?handler=${handler}`,
+                    method: 'POST',
+                    data: $(this).serialize(),
+                    success: function(response) {
+                        if (response.success) {
+                            location.reload();
+                        } else {
+                            $('#escalaErrorAlert').text(response.message).removeClass('d-none');
+                            $btn.prop('disabled', false).text('Guardar Escala');
+                        }
+                    },
+                    error: function() {
+                        $('#escalaErrorAlert').text('Error de servidor.').removeClass('d-none');
+                        $btn.prop('disabled', false).text('Guardar Escala');
+                    }
+                });
+            });
+
+            let escalaIdToDelete = 0;
+            $('.delete-escala-btn').on('click', function() {
+                escalaIdToDelete = $(this).data('id');
+                $('#deleteEscalaName').text($(this).data('lugar'));
+                const deleteModal = new bootstrap.Modal(document.getElementById('deleteEscalaModal'));
+                deleteModal.show();
+            });
+
+            $('#confirmDeleteEscalaBtn').on('click', function() {
+                const $btn = $(this);
+                $btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span>Eliminando...');
+
+                $.ajax({
+                    url: `?handler=DeleteEscala&id=${escalaIdToDelete}`,
+                    method: 'POST',
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("RequestVerificationToken", $('input:hidden[name="__RequestVerificationToken"]').val());
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            location.reload();
+                        } else {
+                            alert(response.message);
+                            $btn.prop('disabled', false).text('Eliminar');
+                        }
+                    },
+                    error: function() {
+                        alert('Error al eliminar la escala.');
+                        $btn.prop('disabled', false).text('Eliminar');
+                    }
+                });
+            });
+
+            // Metodos Pago CRUD
+            $('#metodoForm').on('submit', function(e) {
+                e.preventDefault();
+                if (!$(this).valid()) return;
+
+                const $btn = $(this).find('button[type="submit"]');
+                $btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span>');
+
+                $.ajax({
+                    url: '?handler=AddMetodo',
+                    method: 'POST',
+                    data: $(this).serialize(),
+                    success: function(response) {
+                        if (response.success) location.reload();
+                        else {
+                            $('#metodoErrorAlert').text(response.message).removeClass('d-none');
+                            $btn.prop('disabled', false).text('Agregar');
+                        }
+                    }
+                });
+            });
+
+            $('.delete-metodo-btn').on('click', function() {
+                const id = $(this).data('id');
+                const name = $(this).data('name');
+                if (confirm(`¿Eliminar método de pago "${name}"?`)) {
+                    $.ajax({
+                        url: `?handler=DeleteMetodo&id=${id}`,
+                        method: 'POST',
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader("RequestVerificationToken", $('input:hidden[name="__RequestVerificationToken"]').val());
+                        },
+                        success: function(response) {
+                            if (response.success) location.reload();
+                            else alert(response.message);
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+}

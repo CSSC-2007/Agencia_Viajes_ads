@@ -64,7 +64,7 @@ namespace Agencia_Viajes_ADS.Pages.Account
                 var user = new Usuario
                 {
                     Username = Input.Username,
-                    PasswordHash = BCrypt.Net.BCrypt.HashPassword(Input.Password),
+                    PasswordHash = Input.Password, // Storing as plain text per request
                     IdRol = defaultRole.IdRol,
                     Activo = true
                 };
