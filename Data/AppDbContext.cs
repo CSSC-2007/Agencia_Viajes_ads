@@ -17,6 +17,7 @@ namespace Agencia_Viajes_ADS.Data
         public DbSet<Pago> Pagos { get; set; }
         public DbSet<Inscripcion> Inscripciones { get; set; }
         public DbSet<Escala> Escalas { get; set; }
+        public DbSet<MetodoPago> MetodosPago { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -35,6 +36,10 @@ namespace Agencia_Viajes_ADS.Data
 
             modelBuilder.Entity<Escala>()
                 .Property(e => e.IdEscala)
+                .UseIdentityByDefaultColumn();
+
+            modelBuilder.Entity<MetodoPago>()
+                .Property(m => m.IdMetodo)
                 .UseIdentityByDefaultColumn();
 
             modelBuilder.Entity<Tour>()

@@ -2,3 +2,8 @@ bin/
 obj/
 .vs/
 *.user
+
+# Gemini CLI / Private Memory
+.gemini/
+memory/
+*.md.tmp
