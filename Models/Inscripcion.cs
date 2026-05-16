@@ -8,16 +8,16 @@ namespace Agencia_Viajes_ADS.Models
     {
         [Key]
         [Column("id_inscripcion")]
-        public long IdInscripcion { get; set; }
+        public int IdInscripcion { get; set; }
 
         [Column("id_cliente")]
-        public long IdCliente { get; set; }
+        public int IdCliente { get; set; }
 
         [Column("id_tour")]
-        public long IdTour { get; set; }
+        public int IdTour { get; set; }
 
         [Column("id_pago")]
-        public long IdPago { get; set; }
+        public int IdPago { get; set; }
 
         [Column("fecha_inscripcion")]
         public DateTime FechaInscripcion { get; set; }
