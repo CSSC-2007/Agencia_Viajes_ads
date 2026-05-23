@@ -1,7 +1,6 @@
 using Agencia_Viajes_ADS.Models;
-using Agencia_Viajes_ADS.Pages;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Agencia_Viajes_ADS.Data
 {
@@ -18,7 +17,6 @@ namespace Agencia_Viajes_ADS.Data
         public DbSet<Inscripcion> Inscripciones { get; set; }
         public DbSet<Escala> Escalas { get; set; }
         public DbSet<MetodoPago> MetodosPago { get; set; }
-
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -48,18 +46,36 @@ namespace Agencia_Viajes_ADS.Data
                 .HasForeignKey(t => t.IdEscala)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            foreach (var entity in modelBuilder.Model.GetEntityTypes())
+            // ==================================
+            // CONVERSIÓN GLOBAL DE DATETIME A UTC
+            // ==================================
+
+            var dateTimeConverter = new ValueConverter<DateTime, DateTime>(
+                v => v.Kind == DateTimeKind.Utc
+                    ? v
+                    : DateTime.SpecifyKind(v, DateTimeKind.Utc),
+
+                v => DateTime.SpecifyKind(v, DateTimeKind.Utc)
+            );
+
+            foreach (var entityType in modelBuilder.Model.GetEntityTypes())
             {
-                var tableName = entity.GetTableName();
+                var tableName = entityType.GetTableName();
 
                 if (tableName != null)
                 {
-                    entity.SetTableName(tableName.ToLowerInvariant());
+                    entityType.SetTableName(tableName.ToLowerInvariant());
                 }
 
-                foreach (var property in entity.GetProperties())
+                foreach (var property in entityType.GetProperties())
                 {
                     property.SetColumnName(property.GetColumnName().ToLowerInvariant());
+
+                    // Aplicar UTC automáticamente
+                    if (property.ClrType == typeof(DateTime))
+                    {
+                        property.SetValueConverter(dateTimeConverter);
+                    }
                 }
             }
         }
