@@ -3,6 +3,7 @@ using Agencia_Viajes_ADS.Data;
 using Agencia_Viajes_ADS.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Globalization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Agencia_Viajes_ADS.Pages
 {
@@ -23,20 +24,30 @@ namespace Agencia_Viajes_ADS.Pages
         public List<TransaccionVm> TransaccionesRecientes { get; set; } = new();
         public List<MonthlyIncomeVm> IngresosPorMes { get; set; } = new();
         public List<SalesByDestinationVm> VentasPorDestino { get; set; } = new();
+        public List<PagosCuotasVm> PagosEnCuotas { get; set; } = new();
+        public List<ClienteViajesVm> ClientesFrecuentes { get; set; } = new();
+        public List<TourCapacidadVm> ReporteCapacidad { get; set; } = new();
+
+        [BindProperty(SupportsGet = true)]
+        public int MinimoViajes { get; set; } = 1;
 
         public void OnGet()
         {
             // Ingresos Totales
             IngresosTotales = _context.Pagos.Sum(p => p.MontoTotal);
 
-            // Pagos Pendientes (Mocking logic based on "Cancelada" vs "Activa" or just showing something)
-            // Since we don't have a strict 'Pendiente', we'll use a subset for demonstration or just 0
-            PagosPendientes = _context.Inscripciones
-                .Where(i => i.Estado == "Pendiente")
-                .Join(_context.Pagos, i => i.IdPago, p => p.IdPago, (i, p) => p.MontoTotal)
-                .Sum();
+            // Pagos Pendientes: Diferencia entre Precio del Tour y Monto Pagado
+            var deudas = (
+                from i in _context.Inscripciones
+                join t in _context.Tours on i.IdTour equals t.IdTour
+                join p in _context.Pagos on i.IdPago equals p.IdPago
+                where i.Estado == "Activa"
+                select t.Precio - p.MontoTotal
+            ).ToList();
+
+            PagosPendientes = deudas.Where(d => d > 0).Sum();
             
-            CantidadFacturasPendientes = _context.Inscripciones.Count(i => i.Estado == "Pendiente");
+            CantidadFacturasPendientes = deudas.Count(d => d > 0);
 
             // Crecimiento Mensual (Simplified)
             var currentMonth = DateTime.UtcNow.Month;
@@ -106,6 +117,46 @@ namespace Agencia_Viajes_ADS.Pages
                     Cantidad = g.Count()
                 }
             ).OrderByDescending(x => x.Cantidad).Take(3).ToList();
+
+            // REPORTE GERENTE: Pagos en cuotas
+            PagosEnCuotas = (
+                from i in _context.Inscripciones
+                join c in _context.Clientes on i.IdCliente equals c.IdCliente
+                join p in _context.Pagos on i.IdPago equals p.IdPago
+                join t in _context.Tours on i.IdTour equals t.IdTour
+                where p.CantidadCuotas > 1
+                select new PagosCuotasVm
+                {
+                    Cliente = c.Nombre,
+                    Tour = t.NombreTour,
+                    Monto = p.MontoTotal,
+                    Cuotas = p.CantidadCuotas
+                }
+            ).ToList();
+
+            // REPORTE GERENTE: Clientes con más de X viajes (determinado por el usuario)
+            ClientesFrecuentes = (
+                from i in _context.Inscripciones
+                join c in _context.Clientes on i.IdCliente equals c.IdCliente
+                where i.Estado == "Activa"
+                group i by c.Nombre into g
+                where g.Count() > MinimoViajes
+                select new ClienteViajesVm
+                {
+                    Cliente = g.Key,
+                    CantidadViajes = g.Count()
+                }
+            ).ToList();
+
+            // REPORTE GERENTE: Capacidad de Tours
+            ReporteCapacidad = _context.Tours
+                .Select(t => new TourCapacidadVm
+                {
+                    NombreTour = t.NombreTour,
+                    PlazasTotales = t.CantidadPlazas,
+                    PlazasOcupadas = t.PlazasOcupadas,
+                    PlazasDisponibles = t.CantidadPlazas - t.PlazasOcupadas
+                }).ToList();
         }
 
         public class TransaccionVm
@@ -129,6 +180,28 @@ namespace Agencia_Viajes_ADS.Pages
         {
             public string Destino { get; set; } = "";
             public int Cantidad { get; set; }
+        }
+
+        public class PagosCuotasVm
+        {
+            public string Cliente { get; set; } = "";
+            public string Tour { get; set; } = "";
+            public decimal Monto { get; set; }
+            public int Cuotas { get; set; }
+        }
+
+        public class ClienteViajesVm
+        {
+            public string Cliente { get; set; } = "";
+            public int CantidadViajes { get; set; }
+        }
+
+        public class TourCapacidadVm
+        {
+            public string NombreTour { get; set; } = "";
+            public int PlazasTotales { get; set; }
+            public int PlazasOcupadas { get; set; }
+            public int PlazasDisponibles { get; set; }
         }
     }
 }

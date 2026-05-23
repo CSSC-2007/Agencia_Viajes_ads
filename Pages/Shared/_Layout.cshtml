@@ -26,31 +26,43 @@
                         <i class="bi bi-speedometer2"></i> Dashboard
                     </a>
                 </li>
-                <li class="@(ViewContext.RouteData.Values["page"]?.ToString() == "/Paquetes" ? "active" : "")">
-                    <a asp-page="/Paquetes">
-                        <i class="bi bi-box-seam"></i> Mis Paquetes
-                    </a>
-                </li>
-                <li class="@(ViewContext.RouteData.Values["page"]?.ToString() == "/Clientes" ? "active" : "")">
-                    <a asp-page="/Clientes">
-                        <i class="bi bi-people"></i> Clientes
-                    </a>
-                </li>
-                <li class="@(ViewContext.RouteData.Values["page"]?.ToString() == "/Reservas" ? "active" : "")">
-                    <a asp-page="/Reservas">
-                        <i class="bi bi-calendar-check"></i> Reservas
-                    </a>
-                </li>
-                <li class="@(ViewContext.RouteData.Values["page"]?.ToString() == "/Finanzas" ? "active" : "")">
-                    <a asp-page="/Finanzas">
-                        <i class="bi bi-cash-stack"></i> Finanzas
-                    </a>
-                </li>
-                <li class="@(ViewContext.RouteData.Values["page"]?.ToString() == "/Configuracion" ? "active" : "")">
-                    <a asp-page="/Configuracion">
-                        <i class="bi bi-gear"></i> Configuración
-                    </a>
-                </li>
+                
+                @if (User.IsInRole("Gerente") || User.IsInRole("Turismo"))
+                {
+                    <li class="@(ViewContext.RouteData.Values["page"]?.ToString() == "/Paquetes" ? "active" : "")">
+                        <a asp-page="/Paquetes">
+                            <i class="bi bi-box-seam"></i> Mis Paquetes
+                        </a>
+                    </li>
+                }
+
+                @if (User.IsInRole("Gerente") || User.IsInRole("Atencion"))
+                {
+                    <li class="@(ViewContext.RouteData.Values["page"]?.ToString() == "/Clientes" ? "active" : "")">
+                        <a asp-page="/Clientes">
+                            <i class="bi bi-people"></i> Clientes
+                        </a>
+                    </li>
+                    <li class="@(ViewContext.RouteData.Values["page"]?.ToString() == "/Reservas" ? "active" : "")">
+                        <a asp-page="/Reservas">
+                            <i class="bi bi-calendar-check"></i> Reservas
+                        </a>
+                    </li>
+                }
+
+                @if (User.IsInRole("Gerente"))
+                {
+                    <li class="@(ViewContext.RouteData.Values["page"]?.ToString() == "/Finanzas" ? "active" : "")">
+                        <a asp-page="/Finanzas">
+                            <i class="bi bi-cash-stack"></i> Finanzas
+                        </a>
+                    </li>
+                    <li class="@(ViewContext.RouteData.Values["page"]?.ToString() == "/Configuracion" ? "active" : "")">
+                        <a asp-page="/Configuracion">
+                            <i class="bi bi-gear"></i> Configuración
+                        </a>
+                    </li>
+                }
             </ul>
         </nav>
 

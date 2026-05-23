@@ -40,12 +40,6 @@ namespace Agencia_Viajes_ADS.Data
                 .Property(m => m.IdMetodo)
                 .UseIdentityByDefaultColumn();
 
-            modelBuilder.Entity<Tour>()
-                .HasOne(t => t.Escala)
-                .WithMany()
-                .HasForeignKey(t => t.IdEscala)
-                .OnDelete(DeleteBehavior.Restrict);
-
             // ==================================
             // CONVERSIÓN GLOBAL DE DATETIME A UTC
             // ==================================

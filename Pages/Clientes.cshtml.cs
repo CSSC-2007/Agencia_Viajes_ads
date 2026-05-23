@@ -31,6 +31,11 @@ namespace Agencia_Viajes_ADS.Pages
 
         public async Task<IActionResult> OnPostCrearAsync()
         {
+            if (await _db.Clientes.AnyAsync(c => c.IdCliente == ClienteForm.IdCliente))
+            {
+                ModelState.AddModelError("ClienteForm.IdCliente", "El ID del Cliente ya existe.");
+            }
+
             if (!ModelState.IsValid)
             {
                 Clientes = await _db.Clientes.OrderBy(c => c.Nombre).ToListAsync();

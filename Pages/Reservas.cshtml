@@ -17,6 +17,15 @@
 
             <h1>Reservaciones</h1>
 
+            @if (TempData["Exito"] != null)
+            {
+                <div class="alert alert-success mt-2">@TempData["Exito"]</div>
+            }
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger mt-2">@TempData["Error"]</div>
+            }
+
             <p class="cliente">
                 Usuario: <strong>@Model.NombreUsuario</strong>
             </p>
@@ -42,7 +51,7 @@
                         @foreach (var tour in Model.Tours)
                         {
                             <option value="@tour.IdTour">
-                                @tour.NombreTour
+                                @tour.NombreTour ($@tour.Precio:N2)
                             </option>
                         }
                     </select>
@@ -95,6 +104,7 @@
                         <th>Monto</th>
                         <th>Estado</th>
                         <th>Fecha registro</th>
+                        <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -107,6 +117,15 @@
                             <td>@reserva.Pago</td>
                             <td>@reserva.Estado</td>
                             <td>@reserva.FechaInscripcion.ToString("dd/MM/yyyy")</td>
+                            <td>
+                                @if (reserva.Estado != "Cancelada")
+                                {
+                                    <form method="post" asp-page-handler="Cancelar" asp-route-id="@reserva.IdInscripcion" style="display:inline;">
+                                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('¿Dar de baja?')">Baja</button>
+                                    </form>
+                                    <button class="btn btn-sm btn-warning" onclick="abrirEditarPago('@reserva.IdInscripcion', '@reserva.MetodoPago', '@reserva.Cuotas', '@reserva.Pago')">Pago</button>
+                                }
+                            </td>
                         </tr>
                     }
                 </tbody>
@@ -117,3 +136,51 @@
     </div>
 
 </div>
+
+<!-- MODAL EDITAR PAGO -->
+<div class="modal fade" id="modalEditarPago" tabindex="-1" style="color: black;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Modificar Forma de Pago</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" asp-page-handler="ModificarPago">
+                <div class="modal-body">
+                    <input type="hidden" asp-for="IdInscripcionEdit" id="editIdInscripcion" />
+                    <div class="mb-3">
+                        <label class="form-label">Monto Total Pagado</label>
+                        <input asp-for="MontoEdit" id="editMonto" class="form-control" type="number" step="0.01" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Método Pago</label>
+                        <select asp-for="MetodoPagoEdit" id="editMetodoPago" class="form-control">
+                            <option>Efectivo</option>
+                            <option>Tarjeta</option>
+                            <option>Cuotas</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Cuotas</label>
+                        <input asp-for="CuotasEdit" id="editCuotas" class="form-control" type="number" min="1" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-primary">Actualizar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    function abrirEditarPago(id, metodo, cuotas, monto) {
+        document.getElementById('editIdInscripcion').value = id;
+        document.getElementById('editMetodoPago').value = metodo;
+        document.getElementById('editCuotas').value = cuotas;
+        document.getElementById('editMonto').value = monto;
+        new bootstrap.Modal(document.getElementById('modalEditarPago')).show();
+    }
+</script>

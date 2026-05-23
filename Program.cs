@@ -68,37 +68,51 @@ using (var scope = app.Services.CreateScope())
             }
             catch (Npgsql.PostgresException ex) when (ex.SqlState == "42P07") // duplicate_table
             {
-                Console.WriteLine("Las tablas ya existen, saltando creación.");
+                Console.WriteLine("Las tablas ya existen, validando esquema...");
+                
+                // Migración manual para el cambio de relación Tour-Escala (1:1 -> 1:N)
+                try 
+                {
+                    // 1. Agregar id_tour a escala si no existe
+                    db.Database.ExecuteSqlRaw(@"
+                        DO $$ 
+                        BEGIN 
+                            IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='escala' AND column_name='id_tour') THEN
+                                ALTER TABLE public.escala ADD COLUMN id_tour BIGINT;
+                                ALTER TABLE public.escala ADD CONSTRAINT fk_escala_tour FOREIGN KEY (id_tour) REFERENCES public.tour(id_tour) ON DELETE CASCADE;
+                            END IF;
+                        END $$;");
+
+                    // 2. Eliminar id_escala de tour si existe
+                    db.Database.ExecuteSqlRaw(@"
+                        DO $$ 
+                        BEGIN 
+                            IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='tour' AND column_name='id_escala') THEN
+                                ALTER TABLE public.tour DROP COLUMN id_escala;
+                            END IF;
+                        END $$;");
+
+                    // 3. Agregar precio a tour si no existe
+                    db.Database.ExecuteSqlRaw(@"
+                        DO $$ 
+                        BEGIN 
+                            IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='tour' AND column_name='precio') THEN
+                                ALTER TABLE public.tour ADD COLUMN precio NUMERIC(12,2) DEFAULT 0;
+                            END IF;
+                        END $$;");
+                    
+                    Console.WriteLine("Esquema actualizado correctamente.");
+                }
+                catch (Exception migEx)
+                {
+                    Console.WriteLine($"[AVISO MIGRACIÓN]: {migEx.Message}");
+                }
             }
         }
-// ... resto del seed
 
         // Seed Data
-        if (!db.Roles.Any())
-        {
-            Console.WriteLine("Sembrando roles...");
-            db.Roles.AddRange(
-                new Agencia_Viajes_ADS.Models.Rol { NombreRol = "Gerente" },
-                new Agencia_Viajes_ADS.Models.Rol { NombreRol = "Atencion" },
-                new Agencia_Viajes_ADS.Models.Rol { NombreRol = "Turismo" }
-            );
-            db.SaveChanges();
-        }
-
-        if (!db.Usuarios.Any())
-        {
-            Console.WriteLine("Sembrando usuario admin...");
-            var adminRole = db.Roles.First(r => r.NombreRol == "Gerente");
-            db.Usuarios.Add(new Agencia_Viajes_ADS.Models.Usuario
-            {
-                Username = "admin",
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin123!"),
-                IdRol = adminRole.IdRol,
-                Activo = true
-            });
-            db.SaveChanges();
-            Console.WriteLine(">>> SEMILLA LISTA: admin / Admin123!");
-        }
+        DbSeeder.Seed(db);
+        Console.WriteLine("Sembrado de base de datos completado.");
     }
     catch (Exception ex)
     {

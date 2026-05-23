@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Agencia_Viajes_ADS.Data;
 using Agencia_Viajes_ADS.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Agencia_Viajes_ADS.Pages
 {
@@ -44,6 +45,18 @@ namespace Agencia_Viajes_ADS.Pages
 
         public List<ReservaVm> ReservasCliente { get; set; } = new();
 
+        [BindProperty]
+        public int IdInscripcionEdit { get; set; }
+
+        [BindProperty]
+        public decimal MontoEdit { get; set; }
+
+        [BindProperty]
+        public string MetodoPagoEdit { get; set; } = "";
+
+        [BindProperty]
+        public int CuotasEdit { get; set; } = 1;
+
         // GET
 
         public void OnGet()
@@ -74,6 +87,14 @@ namespace Agencia_Viajes_ADS.Pages
                 if (tour == null)
                 {
                     ModelState.AddModelError("", "Tour no encontrado");
+                    CargarDatos();
+                    return Page();
+                }
+
+                // Validar precio
+                if (Monto > tour.Precio)
+                {
+                    ModelState.AddModelError("Monto", $"El monto no puede ser mayor al precio del tour (${tour.Precio:N2})");
                     CargarDatos();
                     return Page();
                 }
@@ -129,6 +150,50 @@ namespace Agencia_Viajes_ADS.Pages
             }
         }
 
+        public async Task<IActionResult> OnPostCancelarAsync(int id)
+        {
+            var inscripcion = await _context.Inscripciones
+                .Include(i => i.Tour)
+                .FirstOrDefaultAsync(i => i.IdInscripcion == id);
+
+            if (inscripcion != null && inscripcion.Estado != "Cancelada")
+            {
+                inscripcion.Estado = "Cancelada";
+                if (inscripcion.Tour != null)
+                {
+                    inscripcion.Tour.PlazasOcupadas = Math.Max(0, inscripcion.Tour.PlazasOcupadas - 1);
+                }
+                await _context.SaveChangesAsync();
+            }
+
+            return RedirectToPage();
+        }
+
+        public async Task<IActionResult> OnPostModificarPagoAsync()
+        {
+            var inscripcion = await _context.Inscripciones
+                .Include(i => i.Pago)
+                .Include(i => i.Tour)
+                .FirstOrDefaultAsync(i => i.IdInscripcion == IdInscripcionEdit);
+
+            if (inscripcion != null && inscripcion.Pago != null && inscripcion.Tour != null)
+            {
+                if (MontoEdit > inscripcion.Tour.Precio)
+                {
+                    TempData["Error"] = $"El monto total ($ {MontoEdit:N2}) no puede exceder el precio del tour ($ {inscripcion.Tour.Precio:N2})";
+                    return RedirectToPage();
+                }
+
+                inscripcion.Pago.MontoTotal = MontoEdit;
+                inscripcion.Pago.MetodoPago = MetodoPagoEdit;
+                inscripcion.Pago.CantidadCuotas = CuotasEdit;
+                await _context.SaveChangesAsync();
+                TempData["Exito"] = "Pago actualizado correctamente.";
+            }
+
+            return RedirectToPage();
+        }
+
         // METODO CARGAR DATOS
 
 
@@ -142,7 +207,8 @@ namespace Agencia_Viajes_ADS.Pages
                 .Select(t => new TourVm
                 {
                     IdTour = t.IdTour,
-                    NombreTour = t.NombreTour
+                    NombreTour = t.NombreTour,
+                    Precio = t.Precio
                 })
                 .ToList();
 
@@ -170,7 +236,9 @@ namespace Agencia_Viajes_ADS.Pages
                     NombreTour = t.NombreTour,
                     Estado = i.Estado,
                     FechaInscripcion = i.FechaInscripcion,
-                    Pago = p.MontoTotal
+                    Pago = p.MontoTotal,
+                    MetodoPago = p.MetodoPago,
+                    Cuotas = p.CantidadCuotas
                 }
             ).ToList();
         }
@@ -182,6 +250,7 @@ namespace Agencia_Viajes_ADS.Pages
         {
             public int IdTour { get; set; }
             public string NombreTour { get; set; } = "";
+            public decimal Precio { get; set; }
         }
 
         public class ClienteVm
@@ -198,6 +267,8 @@ namespace Agencia_Viajes_ADS.Pages
             public string Estado { get; set; } = "";
             public DateTime FechaInscripcion { get; set; }
             public decimal Pago { get; set; }
+            public string MetodoPago { get; set; } = "";
+            public int Cuotas { get; set; }
         }
     }
 }

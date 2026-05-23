@@ -10,10 +10,6 @@ namespace Agencia_Viajes_ADS.Models
         [Column("id_tour")]
         public int IdTour { get; set; }
 
-        [Column("id_escala")]
-        public int IdEscala { get; set; }
-
-        [Required]
         [Column("nombre_tour")]
         [MaxLength(100)]
         public string NombreTour { get; set; } = string.Empty;
@@ -34,7 +30,9 @@ namespace Agencia_Viajes_ADS.Models
         [Column("plazas_ocupadas")]
         public int PlazasOcupadas { get; set; }
 
-        [ForeignKey("IdEscala")]
-        public Escala? Escala { get; set; }
+        [Column("precio")]
+        public decimal Precio { get; set; }
+
+        public ICollection<Escala> Escalas { get; set; } = new List<Escala>();
     }
 }

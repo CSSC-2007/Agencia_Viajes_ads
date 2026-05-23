@@ -56,7 +56,6 @@
                 </div>
                 <p class="text-muted mb-1 small">Pagos Pendientes</p>
                 <h2 class="fw-bold mb-1">$@Model.PagosPendientes.ToString("N2")</h2>
-                <a href="#" class="text-red small text-decoration-none fw-bold">Ver facturas atrasadas &rarr;</a>
             </div>
         </div>
     </div>
@@ -151,6 +150,118 @@
                 </div>
                 <div class="mt-3">
                     <p class="text-muted small mb-0">Mostrando @Model.TransaccionesRecientes.Count de @Model.TransaccionesRecientes.Count transacciones</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- REPORTE GERENTE: PAGOS EN CUOTAS Y CLIENTES FRECUENTES -->
+    <div class="row mt-4 mb-4">
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm p-4">
+                <h5 class="fw-bold mb-3 text-orange">Pagos en Cuotas</h5>
+                <div class="table-responsive">
+                    <table class="table table-sm align-middle">
+                        <thead class="text-muted small">
+                            <tr>
+                                <th>CLIENTE</th>
+                                <th>TOUR</th>
+                                <th>CUOTAS</th>
+                                <th>MONTO</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (!Model.PagosEnCuotas.Any())
+                            {
+                                <tr><td colspan="4" class="text-center small">No hay pagos en cuotas</td></tr>
+                            }
+                            @foreach (var p in Model.PagosEnCuotas)
+                            {
+                                <tr>
+                                    <td>@p.Cliente</td>
+                                    <td>@p.Tour</td>
+                                    <td class="text-center"><span class="badge bg-warning text-dark">@p.Cuotas</span></td>
+                                    <td class="fw-bold">$@p.Monto.ToString("N2")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm p-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="fw-bold mb-0 text-success">Clientes Frecuentes</h5>
+                    <form method="get" class="d-flex align-items-center gap-2">
+                        <span class="small text-muted">Más de:</span>
+                        <input type="number" name="MinimoViajes" value="@Model.MinimoViajes" class="form-control form-control-sm" style="width: 60px;" />
+                        <button type="submit" class="btn btn-sm btn-success">Ver</button>
+                    </form>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-sm align-middle">
+                        <thead class="text-muted small">
+                            <tr>
+                                <th>CLIENTE</th>
+                                <th>CANTIDAD VIAJES</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (!Model.ClientesFrecuentes.Any())
+                            {
+                                <tr><td colspan="2" class="text-center small">No hay clientes con múltiples viajes</td></tr>
+                            }
+                            @foreach (var c in Model.ClientesFrecuentes)
+                            {
+                                <tr>
+                                    <td>@c.Cliente</td>
+                                    <td class="text-center fw-bold text-success">@c.CantidadViajes</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- REPORTE GERENTE: CAPACIDAD DE TOURS -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm p-4">
+                <h5 class="fw-bold mb-3">Informe de Ocupación de Tours</h5>
+                <div class="table-responsive">
+                    <table class="table align-middle">
+                        <thead class="text-muted small">
+                            <tr>
+                                <th>TOUR</th>
+                                <th>PLAZAS TOTALES</th>
+                                <th>PLAZAS OCUPADAS</th>
+                                <th>PLAZAS DISPONIBLES</th>
+                                <th>OCUPACIÓN %</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var t in Model.ReporteCapacidad)
+                            {
+                                var porcentaje = t.PlazasTotales > 0 ? (t.PlazasOcupadas * 100 / t.PlazasTotales) : 0;
+                                <tr>
+                                    <td>@t.NombreTour</td>
+                                    <td>@t.PlazasTotales</td>
+                                    <td>@t.PlazasOcupadas</td>
+                                    <td class="@(t.PlazasDisponibles < 5 ? "text-danger fw-bold" : "")">@t.PlazasDisponibles</td>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <div class="progress flex-grow-1" style="height: 8px;">
+                                                <div class="progress-bar @(porcentaje > 80 ? "bg-danger" : "bg-warning")" style="width: @porcentaje%"></div>
+                                            </div>
+                                            <span class="small fw-bold">@porcentaje%</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>

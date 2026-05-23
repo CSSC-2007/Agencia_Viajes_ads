@@ -18,10 +18,11 @@ namespace Agencia_Viajes_ADS.Pages
 
         public List<Tour> Paquetes { get; set; } = new();
 
-        public List<SelectListItem> EscalasDisponibles { get; set; } = new();
-
         [BindProperty]
         public Tour TourForm { get; set; } = new();
+
+        [BindProperty]
+        public string EscalasTexto { get; set; } = string.Empty;
 
         public async Task OnGetAsync()
         {
@@ -31,17 +32,8 @@ namespace Agencia_Viajes_ADS.Pages
         private async Task CargarDatos()
         {
             Paquetes = await _db.Tours
-                .Include(t => t.Escala)
+                .Include(t => t.Escalas)
                 .OrderBy(t => t.IdTour)
-                .ToListAsync();
-
-            EscalasDisponibles = await _db.Escalas
-                .OrderBy(e => e.Orden)
-                .Select(e => new SelectListItem
-                {
-                    Value = e.IdEscala.ToString(),
-                    Text = e.LugarEscala + " - Orden " + e.Orden
-                })
                 .ToListAsync();
         }
 
@@ -55,55 +47,76 @@ namespace Agencia_Viajes_ADS.Pages
 
         public async Task<IActionResult> OnPostCrearAsync()
         {
+            // Validar si el ID ya existe
+            if (await _db.Tours.AnyAsync(t => t.IdTour == TourForm.IdTour))
+            {
+                ModelState.AddModelError("TourForm.IdTour", "El ID del Tour ya existe. Por favor use uno diferente.");
+            }
+
             if (!ModelState.IsValid)
             {
                 await CargarDatos();
                 return Page();
             }
 
-            // ==========================
-            // CONVERTIR FECHAS A UTC
-            // ==========================
-
             TourForm.FechaSalida = ConvertirUtc(TourForm.FechaSalida);
             TourForm.FechaLlegada = ConvertirUtc(TourForm.FechaLlegada);
 
-            _db.Tours.Add(TourForm);
+            // Procesar escalas si se enviaron (separadas por coma)
+            if (!string.IsNullOrWhiteSpace(EscalasTexto))
+            {
+                var nombres = EscalasTexto.Split(',', StringSplitOptions.RemoveEmptyEntries);
+                for (int i = 0; i < nombres.Length; i++)
+                {
+                    TourForm.Escalas.Add(new Escala 
+                    { 
+                        LugarEscala = nombres[i].Trim(),
+                        Orden = i + 1
+                    });
+                }
+            }
 
+            _db.Tours.Add(TourForm);
             await _db.SaveChangesAsync();
 
             TempData["Exito"] = "Paquete creado correctamente.";
-
             return RedirectToPage();
         }
 
         public async Task<IActionResult> OnPostEditarAsync()
         {
-            var paquete = await _db.Tours.FindAsync(TourForm.IdTour);
+            var paquete = await _db.Tours
+                .Include(t => t.Escalas)
+                .FirstOrDefaultAsync(t => t.IdTour == TourForm.IdTour);
 
-            if (paquete == null)
-            {
-                return NotFound();
-            }
+            if (paquete == null) return NotFound();
 
-            paquete.IdEscala = TourForm.IdEscala;
             paquete.NombreTour = TourForm.NombreTour;
             paquete.DescripcionTour = TourForm.DescripcionTour;
-
-            // ==========================
-            // CONVERTIR FECHAS A UTC
-            // ==========================
-
             paquete.FechaSalida = ConvertirUtc(TourForm.FechaSalida);
             paquete.FechaLlegada = ConvertirUtc(TourForm.FechaLlegada);
-
             paquete.CantidadPlazas = TourForm.CantidadPlazas;
             paquete.PlazasOcupadas = TourForm.PlazasOcupadas;
+            paquete.Precio = TourForm.Precio;
+
+            // Actualizar escalas
+            _db.Escalas.RemoveRange(paquete.Escalas);
+            if (!string.IsNullOrWhiteSpace(EscalasTexto))
+            {
+                var nombres = EscalasTexto.Split(',', StringSplitOptions.RemoveEmptyEntries);
+                for (int i = 0; i < nombres.Length; i++)
+                {
+                    paquete.Escalas.Add(new Escala 
+                    { 
+                        LugarEscala = nombres[i].Trim(),
+                        Orden = i + 1
+                    });
+                }
+            }
 
             await _db.SaveChangesAsync();
 
             TempData["Exito"] = "Paquete actualizado correctamente.";
-
             return RedirectToPage();
         }
 
