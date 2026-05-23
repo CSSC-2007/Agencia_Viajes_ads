@@ -20,8 +20,18 @@
 }
 
 <div class="card shadow-sm">
-    <div class="card-header bg-white py-3">
+    <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
         <h5 class="mb-0 fw-semibold">Listado de Clientes</h5>
+        <form method="get" class="d-flex gap-2">
+            <input type="number" name="SearchId" value="@Model.SearchId" class="form-control form-control-sm" placeholder="Buscar por ID..." style="width: 150px;" />
+            <button type="submit" class="btn btn-sm btn-outline-primary">
+                <i class="bi bi-search"></i> Buscar
+            </button>
+            @if (Model.SearchId.HasValue)
+            {
+                <a asp-page="/Clientes" class="btn btn-sm btn-outline-secondary">Limpiar</a>
+            }
+        </form>
     </div>
     <div class="card-body p-0">
         <div class="table-responsive">

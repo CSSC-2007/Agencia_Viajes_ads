@@ -22,9 +22,19 @@ namespace Agencia_Viajes_ADS.Pages
 
         public string? MensajeError { get; set; }
 
+        [BindProperty(SupportsGet = true)]
+        public int? SearchId { get; set; }
+
         public async Task OnGetAsync()
         {
-            Clientes = await _db.Clientes
+            var query = _db.Clientes.AsQueryable();
+
+            if (SearchId.HasValue)
+            {
+                query = query.Where(c => c.IdCliente == SearchId.Value);
+            }
+
+            Clientes = await query
                 .OrderBy(c => c.Nombre)
                 .ToListAsync();
         }
