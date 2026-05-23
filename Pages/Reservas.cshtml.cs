@@ -166,11 +166,14 @@ namespace Agencia_Viajes_ADS.Pages
                 select new ReservaVm
                 {
                     IdInscripcion = i.IdInscripcion,
+                    IdPago = p.IdPago,
                     NombreCliente = c.Nombre,
                     NombreTour = t.NombreTour,
                     Estado = i.Estado,
                     FechaInscripcion = i.FechaInscripcion,
-                    Pago = p.MontoTotal
+                    Pago = p.MontoTotal,
+                    CantidadCuotas = p.CantidadCuotas,
+                    CuotasPagadas = p.CuotasPagadas
                 }
             ).ToList();
         }
@@ -193,11 +196,41 @@ namespace Agencia_Viajes_ADS.Pages
         public class ReservaVm
         {
             public int IdInscripcion { get; set; }
+            public int IdPago { get; set; }
             public string NombreCliente { get; set; } = "";
             public string NombreTour { get; set; } = "";
             public string Estado { get; set; } = "";
             public DateTime FechaInscripcion { get; set; }
             public decimal Pago { get; set; }
+            public int CantidadCuotas { get; set; }
+            public int CuotasPagadas { get; set; }
+        }
+
+
+        // POST PARA PAGAR CUOTA
+        public IActionResult OnPostPagarCuota(int idPago)
+        {
+            var pago = _context.Pagos.FirstOrDefault(p => p.IdPago == idPago);
+
+            if (pago == null)
+            {
+                ModelState.AddModelError("", "Pago no encontrado");
+                CargarDatos();
+                return Page();
+            }
+
+            if (pago.CuotasPagadas >= pago.CantidadCuotas)
+            {
+                ModelState.AddModelError("", "Todas las cuotas ya fueron pagadas");
+                CargarDatos();
+                return Page();
+            }
+
+            pago.CuotasPagadas += 1;
+            _context.SaveChanges();
+
+            TempData["Exito"] = $"Cuota pagada. Cuotas restantes: {pago.CantidadCuotas - pago.CuotasPagadas}";
+            return RedirectToPage();
         }
     }
 }

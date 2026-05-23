@@ -1,28 +1,26 @@
 ﻿@page
 @model Agencia_Viajes_ADS.Pages.ReservasModel
-
 @{
     ViewData["Title"] = "Reservaciones";
 }
-
 <link rel="stylesheet" href="~/css/reservas.css" />
-
 <div class="reservas-container">
-
     <div class="overlay"></div>
-
     <div class="contenido">
-
         <div class="reserva-card">
-
             <h1>Reservaciones</h1>
-
             <p class="cliente">
                 Usuario: <strong>@Model.NombreUsuario</strong>
             </p>
 
-            <form method="post">
+            @if (TempData["Exito"] != null)
+            {
+                <div class="alert alert-success">
+                    @TempData["Exito"]
+                </div>
+            }
 
+            <form method="post">
                 <div class="campo">
                     <label>Cliente</label>
                     <select asp-for="IdCliente" class="form-control">
@@ -35,7 +33,6 @@
                         }
                     </select>
                 </div>
-
                 <div class="campo">
                     <label>Tour</label>
                     <select asp-for="IdTour" class="form-control">
@@ -47,12 +44,10 @@
                         }
                     </select>
                 </div>
-
                 <div class="campo">
                     <label>Monto</label>
                     <input asp-for="Monto" />
                 </div>
-
                 <div class="campo">
                     <label>Método Pago</label>
                     <select asp-for="MetodoPago">
@@ -61,31 +56,23 @@
                         <option>Cuotas</option>
                     </select>
                 </div>
-
                 <div class="campo">
                     <label>Cuotas</label>
                     <input asp-for="Cuotas" />
                 </div>
-
                 <div class="campo">
                     <label>Factura</label>
                     <input asp-for="Factura" />
                 </div>
-
                 <div asp-validation-summary="All" class="text-danger"></div>
-
                 <button type="submit" class="btn-guardar">
                     Guardar Reserva
                 </button>
-
             </form>
-
         </div>
 
         <div class="tabla-card">
-
             <h2>Mis Reservas</h2>
-
             <table>
                 <thead>
                     <tr>
@@ -95,6 +82,7 @@
                         <th>Monto</th>
                         <th>Estado</th>
                         <th>Fecha registro</th>
+                        <th>Cuotas</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -107,13 +95,37 @@
                             <td>@reserva.Pago</td>
                             <td>@reserva.Estado</td>
                             <td>@reserva.FechaInscripcion.ToString("dd/MM/yyyy")</td>
+                            <td>
+                                @if (reserva.CantidadCuotas > 1)
+                                {
+                                    @if (reserva.CuotasPagadas >= reserva.CantidadCuotas)
+                                    {
+                                        <span class="badge bg-success">
+                                            Cuotas completadas
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted me-2">
+                                            @reserva.CuotasPagadas / @reserva.CantidadCuotas
+                                        </span>
+                                        <form method="post" asp-page-handler="PagarCuota" style="display:inline">
+                                            <input type="hidden" name="idPago" value="@reserva.IdPago" />
+                                            <button type="submit" class="btn btn-sm btn-outline-success">
+                                                Pagar cuota
+                                            </button>
+                                        </form>
+                                    }
+                                }
+                                else
+                                {
+                                    <span class="text-muted">Pago único</span>
+                                }
+                            </td>
                         </tr>
                     }
                 </tbody>
             </table>
-
         </div>
-
     </div>
-
 </div>

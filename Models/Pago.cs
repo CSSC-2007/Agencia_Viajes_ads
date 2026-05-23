@@ -19,10 +19,15 @@ namespace Agencia_Viajes_ADS.Models
         [Column("cantidad_cuotas")]
         public int CantidadCuotas { get; set; }
 
+        [Column("cuotas_pagadas")]
+        public int CuotasPagadas { get; set; } = 0;
+
         [Column("fecha_pago")]
         public DateTime FechaPago { get; set; }
 
         [Column("factura")]
         public string Factura { get; set; } = string.Empty;
+
+        
     }
 }
