@@ -1,0 +1,6 @@
+﻿Build started at 10:28 AM...
+1>------ Build started: Project: Agencia_Viajes_ADS, Configuration: Debug Any CPU ------
+1>  Skipping analyzers to speed up the build. You can execute 'Build' or 'Rebuild' command to run analyzers.
+1>  Agencia_Viajes_ADS -> C:\Users\dcber\Desktop\Agencia_Viajes_ads\bin\Debug\net10.0\Agencia_Viajes_ADS.dll
+========== Build: 1 succeeded, 0 failed, 0 up-to-date, 0 skipped ==========
+========== Build completed at 10:28 AM and took 08.327 seconds ==========
