@@ -8,9 +8,11 @@ namespace Agencia_Viajes_ADS.Models
     {
         [Key]
         [Column("id_cliente")]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        [Required(ErrorMessage = "El ID del cliente es obligatorio.")]
         public int IdCliente { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "El nombre es obligatorio.")]
         [Column("nombre")]
         [MaxLength(50)]
         public string Nombre { get; set; } = string.Empty;

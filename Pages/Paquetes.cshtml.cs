@@ -53,6 +53,17 @@ namespace Agencia_Viajes_ADS.Pages
                 ModelState.AddModelError("TourForm.IdTour", "El ID del Tour ya existe. Por favor use uno diferente.");
             }
 
+            // Validaciones de fecha
+            if (TourForm.FechaSalida < DateTime.Now.Date)
+            {
+                ModelState.AddModelError("TourForm.FechaSalida", "La fecha de salida no puede ser anterior a hoy.");
+            }
+
+            if (TourForm.FechaLlegada < TourForm.FechaSalida)
+            {
+                ModelState.AddModelError("TourForm.FechaLlegada", "La fecha de llegada no puede ser anterior a la fecha de salida.");
+            }
+
             if (!ModelState.IsValid)
             {
                 await CargarDatos();
@@ -85,6 +96,17 @@ namespace Agencia_Viajes_ADS.Pages
 
         public async Task<IActionResult> OnPostEditarAsync()
         {
+            if (TourForm.FechaLlegada < TourForm.FechaSalida)
+            {
+                ModelState.AddModelError("TourForm.FechaLlegada", "La fecha de llegada no puede ser anterior a la fecha de salida.");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                await CargarDatos();
+                return Page();
+            }
+
             var paquete = await _db.Tours
                 .Include(t => t.Escalas)
                 .FirstOrDefaultAsync(t => t.IdTour == TourForm.IdTour);

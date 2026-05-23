@@ -19,7 +19,7 @@ namespace Agencia_Viajes_ADS.Models
         public int Orden { get; set; }
 
         [Column("id_tour")]
-        public int IdTour { get; set; }
+        public int? IdTour { get; set; }
 
         [ForeignKey("IdTour")]
         public Tour? Tour { get; set; }

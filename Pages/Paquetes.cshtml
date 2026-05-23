@@ -87,8 +87,8 @@
                                         '@string.Join(", ", p.Escalas.OrderBy(e => e.Orden).Select(e => e.LugarEscala))',
                                         '@p.NombreTour',
                                         '@p.DescripcionTour',
-                                        '@p.FechaSalida.ToString("yyyy-MM-ddTHH:mm")',
-                                        '@p.FechaLlegada.ToString("yyyy-MM-ddTHH:mm")',
+                                        '@p.FechaSalida.ToString("yyyy-MM-dd")',
+                                        '@p.FechaLlegada.ToString("yyyy-MM-dd")',
                                         '@p.CantidadPlazas',
                                         '@p.PlazasOcupadas',
                                         '@p.Precio'
@@ -177,6 +177,7 @@
                         <input asp-for="TourForm.NombreTour"
                                class="form-control"
                                required />
+                        <span asp-validation-for="TourForm.NombreTour" class="text-danger small"></span>
 
                     </div>
 
@@ -186,6 +187,7 @@
 
                         <textarea asp-for="TourForm.DescripcionTour"
                                   class="form-control"></textarea>
+                        <span asp-validation-for="TourForm.DescripcionTour" class="text-danger small"></span>
 
                     </div>
 
@@ -194,9 +196,11 @@
                         <label>Fecha Salida</label>
 
                         <input asp-for="TourForm.FechaSalida"
-                               type="datetime-local"
+                               type="date"
+                               id="createSalida"
                                class="form-control"
                                required />
+                        <span asp-validation-for="TourForm.FechaSalida" class="text-danger small"></span>
 
                     </div>
 
@@ -205,9 +209,11 @@
                         <label>Fecha Llegada</label>
 
                         <input asp-for="TourForm.FechaLlegada"
-                               type="datetime-local"
+                               type="date"
+                               id="createLlegada"
                                class="form-control"
                                required />
+                        <span asp-validation-for="TourForm.FechaLlegada" class="text-danger small"></span>
 
                     </div>
 
@@ -219,6 +225,7 @@
                                type="number"
                                class="form-control"
                                required />
+                        <span asp-validation-for="TourForm.CantidadPlazas" class="text-danger small"></span>
 
                     </div>
 
@@ -230,6 +237,7 @@
                                type="number"
                                class="form-control"
                                required />
+                        <span asp-validation-for="TourForm.PlazasOcupadas" class="text-danger small"></span>
 
                     </div>
 
@@ -242,6 +250,7 @@
                                step="0.01"
                                class="form-control"
                                required />
+                        <span asp-validation-for="TourForm.Precio" class="text-danger small"></span>
 
                     </div>
 
@@ -325,6 +334,7 @@
                         <input asp-for="TourForm.NombreTour"
                                id="editNombre"
                                class="form-control" />
+                        <span asp-validation-for="TourForm.NombreTour" class="text-danger small"></span>
 
                     </div>
 
@@ -335,6 +345,7 @@
                         <textarea asp-for="TourForm.DescripcionTour"
                                   id="editDescripcion"
                                   class="form-control"></textarea>
+                        <span asp-validation-for="TourForm.DescripcionTour" class="text-danger small"></span>
 
                     </div>
 
@@ -343,9 +354,10 @@
                         <label>Fecha Salida</label>
 
                         <input asp-for="TourForm.FechaSalida"
-                               type="datetime-local"
+                               type="date"
                                id="editSalida"
                                class="form-control" />
+                        <span asp-validation-for="TourForm.FechaSalida" class="text-danger small"></span>
 
                     </div>
 
@@ -354,9 +366,10 @@
                         <label>Fecha Llegada</label>
 
                         <input asp-for="TourForm.FechaLlegada"
-                               type="datetime-local"
+                               type="date"
                                id="editLlegada"
                                class="form-control" />
+                        <span asp-validation-for="TourForm.FechaLlegada" class="text-danger small"></span>
 
                     </div>
 
@@ -368,6 +381,7 @@
                                type="number"
                                id="editPlazas"
                                class="form-control" />
+                        <span asp-validation-for="TourForm.CantidadPlazas" class="text-danger small"></span>
 
                     </div>
 
@@ -379,6 +393,7 @@
                                type="number"
                                id="editOcupadas"
                                class="form-control" />
+                        <span asp-validation-for="TourForm.PlazasOcupadas" class="text-danger small"></span>
 
                     </div>
 
@@ -391,6 +406,7 @@
                                step="0.01"
                                id="editPrecio"
                                class="form-control" />
+                        <span asp-validation-for="TourForm.Precio" class="text-danger small"></span>
 
                     </div>
 
@@ -435,6 +451,37 @@
     </text>
 }
 
+document.addEventListener("DOMContentLoaded", function() {
+    // Configuración de fecha mínima para creación (Hoy)
+    const now = new Date();
+    const offset = now.getTimezoneOffset() * 60000;
+    const localISODate = new Date(now - offset).toISOString().slice(0, 10);
+    
+    const createSalida = document.getElementById('createSalida');
+    const createLlegada = document.getElementById('createLlegada');
+    const editSalida = document.getElementById('editSalida');
+    const editLlegada = document.getElementById('editLlegada');
+
+    if (createSalida) {
+        createSalida.min = localISODate;
+        createSalida.addEventListener('change', function() {
+            createLlegada.min = this.value;
+            if (createLlegada.value && createLlegada.value < this.value) {
+                createLlegada.value = this.value;
+            }
+        });
+    }
+
+    if (editSalida) {
+        editSalida.addEventListener('change', function() {
+            editLlegada.min = this.value;
+            if (editLlegada.value && editLlegada.value < this.value) {
+                editLlegada.value = this.value;
+            }
+        });
+    }
+});
+
 function abrirEditar(id, escalas, nombre, descripcion, salida, llegada, plazas, ocupadas, precio)
 {
     document.getElementById('editIdTour').value = id;
@@ -446,6 +493,9 @@ function abrirEditar(id, escalas, nombre, descripcion, salida, llegada, plazas, 
     document.getElementById('editPlazas').value = plazas;
     document.getElementById('editOcupadas').value = ocupadas;
     document.getElementById('editPrecio').value = precio;
+
+    // Actualizar min de llegada al abrir editar
+    document.getElementById('editLlegada').min = salida;
 
     new bootstrap.Modal(document.getElementById('modalEditar')).show();
 }

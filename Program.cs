@@ -70,7 +70,6 @@ using (var scope = app.Services.CreateScope())
             {
                 Console.WriteLine("Las tablas ya existen, validando esquema...");
                 
-                // Migración manual para el cambio de relación Tour-Escala (1:1 -> 1:N)
                 try 
                 {
                     // 1. Agregar id_tour a escala si no existe
@@ -100,6 +99,10 @@ using (var scope = app.Services.CreateScope())
                                 ALTER TABLE public.tour ADD COLUMN precio NUMERIC(12,2) DEFAULT 0;
                             END IF;
                         END $$;");
+
+                    // 4. Asegurar que id_tour no sea identity para permitir inserción manual
+                    db.Database.ExecuteSqlRaw("ALTER TABLE public.tour ALTER COLUMN id_tour DROP IDENTITY IF EXISTS;");
+                    db.Database.ExecuteSqlRaw("ALTER TABLE public.cliente ALTER COLUMN id_cliente DROP IDENTITY IF EXISTS;");
                     
                     Console.WriteLine("Esquema actualizado correctamente.");
                 }
@@ -108,11 +111,53 @@ using (var scope = app.Services.CreateScope())
                     Console.WriteLine($"[AVISO MIGRACIÓN]: {migEx.Message}");
                 }
             }
-        }
 
-        // Seed Data
-        DbSeeder.Seed(db);
-        Console.WriteLine("Sembrado de base de datos completado.");
+            // Sembrado de roles básicos (después de asegurar que las tablas existen)
+            if (!db.Roles.Any())
+            {
+                db.Roles.AddRange(
+                    new Agencia_Viajes_ADS.Models.Rol { NombreRol = "Gerente" },
+                    new Agencia_Viajes_ADS.Models.Rol { NombreRol = "Atencion" },
+                    new Agencia_Viajes_ADS.Models.Rol { NombreRol = "Turismo" }
+                );
+                db.SaveChanges();
+                Console.WriteLine("Roles básicos sembrados correctamente.");
+            }
+
+            // Sembrado de usuarios de prueba
+            if (!db.Usuarios.Any())
+            {
+                var gerenteRole = db.Roles.First(r => r.NombreRol == "Gerente");
+                var atencionRole = db.Roles.First(r => r.NombreRol == "Atencion");
+                var turismoRole = db.Roles.First(r => r.NombreRol == "Turismo");
+
+                db.Usuarios.AddRange(
+                    new Agencia_Viajes_ADS.Models.Usuario 
+                    { 
+                        Username = "admin", 
+                        PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin123!"), 
+                        IdRol = gerenteRole.IdRol,
+                        Activo = true
+                    },
+                    new Agencia_Viajes_ADS.Models.Usuario 
+                    { 
+                        Username = "atencion", 
+                        PasswordHash = BCrypt.Net.BCrypt.HashPassword("Atencion123!"), 
+                        IdRol = atencionRole.IdRol,
+                        Activo = true
+                    },
+                    new Agencia_Viajes_ADS.Models.Usuario 
+                    { 
+                        Username = "turismo", 
+                        PasswordHash = BCrypt.Net.BCrypt.HashPassword("Turismo123!"), 
+                        IdRol = turismoRole.IdRol,
+                        Activo = true
+                    }
+                );
+                db.SaveChanges();
+                Console.WriteLine("Usuarios de prueba sembrados correctamente.");
+            }
+        }
     }
     catch (Exception ex)
     {

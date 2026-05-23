@@ -155,7 +155,7 @@ namespace Agencia_Viajes_ADS.Pages
                 if (escala == null) return new JsonResult(new { success = false, message = "Escala no encontrada." });
 
                 // Check if it's used in any Tour
-                var isUsed = escala.IdTour != 0;
+                var isUsed = escala.IdTour.HasValue;
                 if (isUsed)
                 {
                     return new JsonResult(new { success = false, message = "No se puede eliminar: Esta escala está asociada a un tour." });
