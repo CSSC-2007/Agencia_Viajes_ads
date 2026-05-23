@@ -45,6 +45,14 @@ namespace Agencia_Viajes_ADS.Pages
                 .ToListAsync();
         }
 
+        private DateTime ConvertirUtc(DateTime fecha)
+        {
+            if (fecha.Kind == DateTimeKind.Utc)
+                return fecha;
+
+            return DateTime.SpecifyKind(fecha, DateTimeKind.Utc);
+        }
+
         public async Task<IActionResult> OnPostCrearAsync()
         {
             if (!ModelState.IsValid)
@@ -52,6 +60,13 @@ namespace Agencia_Viajes_ADS.Pages
                 await CargarDatos();
                 return Page();
             }
+
+            // ==========================
+            // CONVERTIR FECHAS A UTC
+            // ==========================
+
+            TourForm.FechaSalida = ConvertirUtc(TourForm.FechaSalida);
+            TourForm.FechaLlegada = ConvertirUtc(TourForm.FechaLlegada);
 
             _db.Tours.Add(TourForm);
 
@@ -74,8 +89,14 @@ namespace Agencia_Viajes_ADS.Pages
             paquete.IdEscala = TourForm.IdEscala;
             paquete.NombreTour = TourForm.NombreTour;
             paquete.DescripcionTour = TourForm.DescripcionTour;
-            paquete.FechaSalida = TourForm.FechaSalida;
-            paquete.FechaLlegada = TourForm.FechaLlegada;
+
+            // ==========================
+            // CONVERTIR FECHAS A UTC
+            // ==========================
+
+            paquete.FechaSalida = ConvertirUtc(TourForm.FechaSalida);
+            paquete.FechaLlegada = ConvertirUtc(TourForm.FechaLlegada);
+
             paquete.CantidadPlazas = TourForm.CantidadPlazas;
             paquete.PlazasOcupadas = TourForm.PlazasOcupadas;
 
